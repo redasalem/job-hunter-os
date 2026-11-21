@@ -1904,8 +1904,18 @@ function cmdPreSubmit() {
     } else {
       ok(`Draft Word Cap OK: ${wordCount}/${opts.maxWords} words (${draftSource})`);
     }
+    const cliches = BANNED_AI_CLICHES.filter(cl => buildSkillRegex(cl).test(draftContent));
+    if (cliches.length > 0) {
+      fail(`Draft Anti-Slop FAIL: banned cliché(s) in ${draftSource}: ${cliches.join(', ')}`);
+      failures++;
+    } else {
+      ok(`Draft Anti-Slop OK: 0 banned clichés (${draftSource})`);
+    }
     if (draftContent.includes('—')) {
-      warn(`Style warning: prose em-dash (—) detected in ${draftSource}; consider replacing before sending.`);
+      fail(`Draft Style FAIL: prose em-dash (—) in ${draftSource}; replace with periods/commas before sending.`);
+      failures++;
+    } else {
+      ok(`Draft Style OK: 0 prose em-dashes (${draftSource})`);
     }
   } else {
     info('Draft Word Check: skipped (pass --draft <file> or --text "<msg>" to verify <= 75-word outreach cap).');
@@ -1930,11 +1940,12 @@ function cmdPreSubmit() {
   }
 }
 
+// Keep in sync with evals/fixtures/ground-truth.json banned_ai_cliches and skills/03-tailor-resume-and-verify.md
 const BANNED_AI_CLICHES = [
   'delve', 'testament', 'tapestry', 'spearheaded', 'synergy', 'thrilled to apply',
-  'moreover', 'furthermore', 'orchestrated', 'hit the ground running',
-  'results-driven', 'passionate about', 'seasoned professional', 'dynamic team player',
-  'fast-paced environment', 'leveraged', 'proven track record', 'deeply excited',
+  'fast-paced environment', 'moreover', 'furthermore', 'leveraged', 'orchestrated',
+  'passionate about', 'dynamic environment', 'dynamic team player', 'proven track record',
+  'hit the ground running', 'deeply excited', 'results-driven', 'seasoned professional',
 ];
 
 function decodeHtmlEntities(str) {

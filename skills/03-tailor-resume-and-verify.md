@@ -60,7 +60,7 @@ Compare EVERY claim in `resume.html` (and `cover-letter.html`) line-by-line agai
 
 ### 3. Anti-AI Slop & Humanizer Filter (Mandatory Before Printing)
 Scan every summary sentence, bullet, and cover-letter paragraph and rewrite if ANY of these appear:
-- **Banned AI clichés (case-insensitive):** `delve`, `testament`, `tapestry`, `spearheaded`, `synergy`, `thrilled to apply`, `fast-paced environment`, `moreover`, `furthermore`, `leveraged`, `orchestrated`, `passionate about`, `dynamic environment`, `proven track record`, `hit the ground running`, `deeply excited`.
+- **Banned AI clichés (case-insensitive; keep in sync with `bin/cli.mjs` `BANNED_AI_CLICHES` and `evals/fixtures/ground-truth.json`):** `delve`, `testament`, `tapestry`, `spearheaded`, `synergy`, `thrilled to apply`, `fast-paced environment`, `moreover`, `furthermore`, `leveraged`, `orchestrated`, `passionate about`, `dynamic environment`, `dynamic team player`, `proven track record`, `hit the ground running`, `deeply excited`, `results-driven`, `seasoned professional`.
 - **Banned em-dash overuse (`—`):** Use **0 em-dashes** inside prose sentences (use periods, commas, or parentheses; structural `Title — Employer` headings are fine).
 - **Tone rule:** Write like a direct, practical peer engineer using concrete technical nouns and active plain verbs (`built`, `shipped`, `cut`, `migrated`, `tested`, `debugged`).
 
@@ -108,3 +108,4 @@ When generating local HTML/PDF resumes, enforce these ATS + visual polish rules:
 Before generating the final tailored CV:
 1. **Comparison Summary:** Present a concise 3-part breakdown: **Matched Keywords**, **Verified Gaps** (never fabricated), and **Highlighted Strengths**.
 2. **Top-Third Priority Re-ordering:** Re-order skills and selected projects so the most relevant stack and projects for the target JD appear in the top third of Page 1 (optimizing for the 6-second recruiter scan).
+

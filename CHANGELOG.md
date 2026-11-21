@@ -1,182 +1,130 @@
+CHANGELOG.md [182L]
 # Changelog
-
 All notable changes to **`job-hunter-os`** will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+... [lean-ctx: omitted 1 lines]
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
 ## [Unreleased]
-
+### Changed
+- **Anti-Slop Contract Alignment (`bin/cli.mjs`, `evals/fixtures/ground-truth.json`, `skills/03-tailor-resume-and-verify.md`, `config/invariants.txt`):** Unified the banned AI-cliché list across CLI `verify`/`eval`, ground-truth fixtures, and the tailor skill; `pre-submit --draft|--text` now hard-fails on banned clichés and prose em-dashes (matching `verify`); expanded pre-submit invariants with Evidence Map / True Gaps, anti-slop, and untrusted-JD rules.
 ### Added
 - **First-Class OpenAI Codex CLI, Google Gemini CLI & GitHub Copilot / VS Code Sync (`bin/cli.mjs`, `adapters/apps/openai-codex-cli.md`, `adapters/apps/gemini-and-copilot.md`):** Added non-destructive managed instruction injection (`$CODEX_HOME/AGENTS.md`, `~/.gemini/GEMINI.md`, `~/.copilot/copilot-instructions.md`), safe TOML `[mcp_servers.*]` syncing (`.codex/config.toml` / `$CODEX_HOME/config.toml`), Gemini CLI `settings.json`, VS Code `.vscode/mcp.json` (`"servers"`), expanded `--ide` targets (`codex`, `gemini`, `copilot`, `roo`, `kiro`, `junie`, `zed`, `goose`, `aider`), local scaffolding for all repo IDE adapters, and Test 7 in `evals/journeys/run-journeys.test.mjs`.
-
 ## [1.5.0] - 2026-11-19 — Universal Guided AI Workflow Engine & Release Hardening
-
 ### Added
 - **Universal Natural-Language Task Router & Task-Specific Readiness (`AGENTS.md`, `skills/REGISTRY.md`, `bin/cli.mjs route`):** Added a 10-intent task router covering natural-language requests (`route "<request>" [--json]`) and decoupled standalone CV, LinkedIn, JD comparison, interview prep, and record-tracking workflows from mandatory `/setup` onboarding.
 - **Built-In Format-Honest CV Reader & Deliverable Verifier (`bin/cli.mjs audit`, `bin/cli.mjs verify`, `skills/01-resume-ingestion.md`):** Added zero-dependency `.docx` ZIP/XML text extraction (`extractDocxText`), sanitized `.html` / Word-compatible `.doc` parsing, strict rejection of scanned PDFs or disguised HTML `.docx`, guided CV creation from scratch, surgical CV editing preserving originals, and post-write placeholder/em-dash/fact verification (`verify <dir|file> [--facts <json|md>]`).
-- **Synthetic Task-Journey Test Matrix (`evals/journeys/journey-matrix.json`, `evals/journeys/run-journeys.test.mjs`, `bin/cli.mjs eval --journeys`):** Added 6 `node:test` integration suites validating 26 user prompts (14 core + 8 LinkedIn/platform + 4 extended variants) and 5 tool-availability fallback scenarios.
-- **Primary Output-Focused CV Tailoring Demo (`docs/index.html`):** Added a standalone, zero-external-request GitHub Pages demo illustrating 3 synthetic scenarios (`Strong Match`, `Stretch Match`, and `Prompt-Injection Trap`) with Before/After diffs, Evidence Maps, ATS keyword coverage comparisons, isolated **True Gaps**, and explicit `APPROVE` status.
-- **Privacy-Safe CV Hygiene Share Cards (`bin/cli.mjs audit --share`):** Generates local `logs/exports/cv-hygiene-card.svg` and `logs/exports/cv-hygiene-card.md` artifacts with raw CV text, personal names, emails, phones, URLs, and filenames excluded.
-- **Universal `/quick-tailor` Discovery (`commands/quick-tailor.md`, `.agents/skills/quick-tailor/SKILL.md`):** Added Claude Code command and `agentskills.io` wrapper entrypoints (enforced in `.github/workflows/validate-repo.yml`) so `/quick-tailor` is discoverable after local and global `init`.
+... [lean-ctx: omitted 4 lines]
 - **CI Hardening & Automated Security Configuration (`.github/dependabot.yml`, `.github/workflows/*.yml`):** Added weekly Dependabot `github-actions` updates, upgraded workflows to Node 24 actions (`checkout@v7`, `setup-node@v7`, `configure-pages@v6`, `upload-pages-artifact@v5`, `deploy-pages@v5`), enforced the `0/0` npm dependencies invariant, and added cross-OS CI runs for `eval --journeys`, `route`, and `verify`.
-
 ### Changed
 - **LinkedIn 3-Mode Guard & Multi-Source Discovery (`skills/linkedin-growth.md`, `skills/platforms/linkedin.md`, `skills/02-discover-and-triage.md`):** Enforced strict boundaries separating Read-Only Profile Inspection, `DRAFT_ONLY` improvement preparation, and `APPROVE`-gated live mutations verified post-save via `browser_snapshot`; enabled multi-source JD analysis with source URLs, verification dates, and explicit separation of verified matches vs. unknown requirements.
-- **Capability Classification (`A–E`) & Offline Metadata Parity (`skills/skills-manifest.json`, `skills/19-on-demand-mcp-routing.md`, `skills/fallback-no-mcp.md`):** Reclassified 9 offline-capable skills to `requires_mcp: []` with `optional_mcp`, preserving fallback execution across Playwright/LinkedIn/PDF/Notion unavailability.
-- **Unified Product Positioning & Output-First Landing Pages (`README.md`, `README.ar.md`, `package.json`, `assets/demo-preview.png`, `assets/social-preview.png`, `assets/proof-card.svg`):** Positioned `job-hunter-os` consistently around *"Truthful CV Tailoring for the AI Agent You Already Use"*, rebuilt the README hero, architecture diagram, and refreshed [`assets/proof-card.svg`](assets/proof-card.svg) for `v1.5.0`.
-- **Fast-Start `init` Onboarding Sequence (`bin/cli.mjs`, `scripts/install.{sh,ps1}`):** Updated post-init guidance to recommend `/demo` (no CV, no browser login) -> `/quick-tailor` (1 real CV + 1 JD, no browser login) -> optional `login` + `/setup`.
+... [lean-ctx: omitted 3 lines]
 - **Unconditional Job-Specific Human `APPROVE` Gate (`skills/04-fill-and-apply.md`, `skills/skills-manifest.json`, `skills/meta-structured-debugging.md`, `skills/13-company-due-diligence.md`, `adapters/apps/hermes-pi-factory-openclaw.md`, `config/guardrails.yaml`):** Removed conflicting `auto_high_confidence` bypass phrasing so every live submission requires explicit job-specific `APPROVE` after a fresh Live DOM Read-Back Table, and any later modification invalidates approval.
 - **Honest Enforcement & Audit Terminology (`docs/execution-safety.md`, `bin/cli.mjs`, `CONTRIBUTING.md`, `docs/repository-audit.md`, `roadmap.md`, IDE rules):** Explicitly distinguished **Deterministic CLI Enforcement** (`bin/cli.mjs`) from **Agent Workflow Requirements** (`AGENTS.md`, `skills/*.md`), replaced misleading `"verified numeric metrics"` audit wording with `"Detected Numeric Metrics"` + heuristic disclaimer, and updated `CONTRIBUTING.md` with three concrete contribution paths.
-- **Secondary Application Tracker Clarity (`docs/demo-dashboard.html`, `templates/analytics-dashboard.html`):** Positioned the Kanban dashboard as a secondary capability with explicit synthetic-sample vs. local-user-data banners, `Sample` card tags, `example.invalid` sample URLs, inline JSON error alerts, `Clear` / `Reset` controls, URL scheme sanitization against `javascript:` links, and responsive mobile/tablet grids.
-
+... [lean-ctx: omitted 1 lines]
 ### Fixed
 - **CV Audit Bullet-Count Regex Bug (`bin/cli.mjs`):** Eliminated stateful `/g` regex matching across bullets (`metricSingleRe` vs. `metricGlobalRe`) so bullets containing numeric metrics are counted accurately.
 - **Dynamic Proof & CLI Metadata (`bin/cli.mjs`):** Removed hardcoded `v1.4.1` and ATS fixture labels from `eval`/`proof`/`--help`, added `devDependencies` count (`0 / 0`) to `proof`, and flagged detected secret tokens accurately in the `audit` hygiene table.
-
 ## [1.4.1] - 2026-11-19 — Instant Local CV Audit CLI, Runtime Clarity & Above-the-Fold Diff
-
 ### Added
 - **Zero-Setup Offline CV Audit CLI (`node ./bin/cli.mjs audit <file> [--share]`):**
   - Accepts any local `.md` or `.txt` CV path resolved from `process.cwd()` (no `ROOT` restriction) and deterministically scores AI-slop clichés & prose em-dashes, quantified metric density, 1-page A4 fit, and data/URL hygiene (with SSRF & token-leak checks).
   - Supports `--share` to print a clean, PII-stripped terminal scorecard ready for sharing on HN, X, Reddit, or LinkedIn.
-  - Added cross-OS CI smoke coverage in [`.github/workflows/validate-repo.yml`](.github/workflows/validate-repo.yml).
-
+... [lean-ctx: omitted 1 lines]
 ### Changed
 - **Runtime Clarity & Real `APPROVE`-Gate Diff Above the Fold (`README.md` & `README.ar.md`):**
   - Added an explicit top-of-page runtime callout stating that `job-hunter-os` runs inside the user's existing AI IDE (Claude Code, Cursor, Windsurf, Cline, Gemini CLI, Codex) using their active subscription with zero external API keys required.
   - Added a 4-line unified `diff` right below the hero showing verified fact grounding and blocked unverified claims before `APPROVE`, and refreshed [`assets/proof-card.svg`](assets/proof-card.svg) to `v1.4.1`.
-
 ## [1.4.0] - 2026-11-19 — First-Time User Conversion & Reproducible Proof Edition
-
 ### Added
 - **Fast-Start `/quick-tailor` Workflow (`.agent/workflows/quick-tailor.md`):**
   - Lets first-time users generate a fact-checked, tailored single-column HTML + TXT resume with an Evidence Map, ATS Keyword Comparison, and excluded True Gaps from one CV and one job description in under 2 minutes — without requiring browser login, Playwright MCP, or full 5-gate platform onboarding.
-- **Reproducible Proof Card CLI (`node ./bin/cli.mjs proof`):**
+... [lean-ctx: omitted 1 lines]
   - Added zero-dependency `proof` command reading live `package.json`, `skills/skills-manifest.json`, `eval --baseline`, and `evals/fixtures/forms/*.html` to generate reproducible `logs/exports/proof-card.svg` and `logs/exports/proof-card.md` (with explicit scope disclosure distinguishing deterministic fixture validation from an AI accuracy benchmark). Committed rendered preview at [`assets/proof-card.svg`](assets/proof-card.svg) and added cross-OS CI smoke verification.
-- **Effortless Community Outcome Submission (`.github/ISSUE_TEMPLATE/share-success.yml`):**
+... [lean-ctx: omitted 1 lines]
   - Added a 30-second GitHub Issue Form (`interview` / `contract` / `offer`, anonymous welcome, strict PII prohibition) so users can share outcomes without forking or opening a PR.
-
 ### Changed
 - **Outcome-First `README.md` & `README.ar.md` + Dynamically Synced Visual Assets (`v1.4.0`, `48` Skills):**
   - Rebuilt both landing pages around a 15-second value proposition (*"Your AI Career Operating System. Tailor Every CV. Verify Every Claim. Stay in Control."*), trimmed top badges to 3, added an explicit `Input → Job Hunter OS → Output` overview, clarified zero-dependency core CLI vs. optional Playwright MCP, and moved deep evaluation tables below the product demo.
   - Regenerated [`assets/demo-preview.png`](assets/demo-preview.png) (`1280x720`) and [`assets/social-preview.png`](assets/social-preview.png) (`1280x640`) dynamically from `package.json` (`v1.4.0`) and `skills/skills-manifest.json` (`48` skills).
-- **Automatic First-Wow `/demo` (`.agent/workflows/demo.md` & `.agents/skills/demo/SKILL.md`):**
+... [lean-ctx: omitted 1 lines]
   - Updated `/demo` to immediately render one complete synthetic tailored preview for Job #1 (original summary, JD requirements, tailored CV, verified facts used, excluded True Gaps, ATS keyword lift, and `<= 75`-word outreach) directly after the Mission Control table without waiting for a follow-up command.
-- **Honest Separation in `HIRED.md`:**
-  - Separated Maintainer Project Origin from Independent Community Outcomes (starting cleanly at Community Outcome #1).
-
+... [lean-ctx: omitted 2 lines]
 ## [1.3.0] - 2026-11-19 — Token-Slim LinkedIn Extraction & Grounded Recruiter-SEO Optimizer
-
 ### Added
 - **Token-Slim Structured Extraction for LinkedIn (`skills/platforms/linkedin.md` & `skills/02-discover-and-triage.md`):**
   - Added a deterministic, read-only Playwright `browser_evaluate` extraction pattern returning compact `<2 KB` JSON (`job_id`, `canonical_url`, `title`, `company`, `location`, `workplace_type`, `jd_text`, `required_skills`, `hiring_team`, `already_applied`, `closed_banner`) instead of dumping raw 25k-token accessibility trees into LLM context.
-  - Preserves `3–9 s` human pacing jitter, `>= 10 s` reading dwell time, `UNTRUSTED_EXTERNAL_DATA` prompt-injection quarantine, and immediate 24-hour circuit-breaker stops.
-- **Grounded Recruiter-SEO LinkedIn Profile Optimizer (`skills/linkedin-growth.md` — 48 Consolidated Skills):**
-  - Added a dedicated `/linkedin-growth` skill scoring LinkedIn sections on a transparent `0–100` rubric (`Headline` 25, `About Hook & Keywords` 25, `Experience Bullets` 30, `Featured & Skills Alignment` 20) against 3–5 target JDs.
+... [lean-ctx: omitted 3 lines]
   - Generates side-by-side Before/After rewrites strictly grounded in `context/profile.md` & `context/cv.md` (zero invented metrics, zero unverified skills, zero AI-slop clichés/em-dashes), saved as `DRAFT_ONLY` and gated behind explicit human `APPROVE`.
-- **Optional External MCP Plugin Guide (`docs/OPTIONAL_MCP_PLUGINS.md`):**
+... [lean-ctx: omitted 1 lines]
   - Documented `stickerdaniel/linkedin-mcp-server` as an opt-in external MCP plugin with clear LinkedIn ToS, `li_at` credential hygiene, and rate-limit warnings alongside our zero-dependency native Playwright MCP default.
-
 ## [1.2.3] - 2026-11-19 — Security & Cross-Platform Hardening
-
 ### Security
 - **Stored XSS & `$`-Substitution Fix in `cmdDashboard`:** Replaced raw `String.prototype.replace` injection in [`bin/cli.mjs`](bin/cli.mjs) with a replacer function that Unicode-escapes HTML/script-unsafe characters (`<`, `>`, `&`, `\u2028`, `\u2029`) before embedding `logs/applications-log.json` into `dashboard.html`.
 - **Immutable Eval Trust Boundary (`evals/fixtures/ground-truth.json`):** Hardened `cmdEval` to load `ground_truth_metrics`, `forbidden_skills` (including aliases `K8s`, `Rustacean`, `SwiftUI`, `iOS`, `C++`, `.NET`), and `banned_ai_cliches` strictly from immutable [`evals/fixtures/ground-truth.json`](evals/fixtures/ground-truth.json) rather than the untrusted `--file` payload, fixed metric regex extraction & exact-token matching, and escaped regex metacharacters.
 - **Cryptographic `cmdUpdate` Verification & Strict Provenance Enforcement:** Embedded the pinned `@redasalem` Ed25519 signing public key inside [`bin/cli.mjs`](bin/cli.mjs) and required `git verify-commit HEAD` to pass before `update` overwrites local `bin/` or `skills/`. Upgraded `doctor` / `doctor --strict` to enforce exact canonical fields in `PROVENANCE.json`, `NOTICE`, and `AUTHORS.md` and fail non-zero on tampering.
-- **CI Invisible-Unicode & BiDi Injection Scanner:** Added a security scan in [`.github/workflows/validate-repo.yml`](.github/workflows/validate-repo.yml) that fails CI if any skill under `skills/` or `.agents/skills/` contains invisible Unicode Tag characters (`U+E0000–U+E007F`) or BiDi override/isolate control characters (`U+202A–U+202E`, `U+2066–U+2069`).
-
+... [lean-ctx: omitted 1 lines]
 ### Added
 - **Executable `pre-submit` Gate & Micro-Invariants (`config/invariants.txt`):** Added a `<500`-byte [`config/invariants.txt`](config/invariants.txt) file and `node ./bin/cli.mjs pre-submit [--draft <file> | --text "<msg>"]` to deterministically enforce the `<= 75`-word outreach cap and daily/warm-up application cap against `logs/applications-log.json` so hard rules survive IDE context compaction.
-
 ### Fixed
 - **Cross-Platform CLI & Windows Hardening (`bin/cli.mjs`):**
-  - Scoped `refuseSymlink` strictly within `ROOT` (and inside `HOME` for external IDE configs) to eliminate false positives on Windows NTFS junctions/OneDrive and Fedora Silverblue/NixOS.
-  - Added 3-attempt retry backoff (`50ms`, `150ms`, `300ms`) on `EPERM`/`EBUSY` in `writeAtomic`.
+... [lean-ctx: omitted 2 lines]
   - Hardened `cmdUnlock` to verify POSIX `SingletonLock` PIDs via `process.kill(pid, 0)` before deleting and report active Windows lock errors cleanly; added Windows `lockfile` detection to `cmdLogin`.
   - Replaced Windows `cmd /c start` in `openFileInBrowser` with shell-metacharacter-safe `powershell.exe` `Start-Process -LiteralPath $env:JHO_OPEN_PATH`.
 - **Pinned Playwright MCP & Stdio Noise Suppression:** Pinned `@playwright/mcp@0.0.86` and `@notionhq/notion-mcp-server@2.6.1` with `NPM_CONFIG_UPDATE_NOTIFIER=false`, `NPM_CONFIG_FUND=false`, `NPM_CONFIG_AUDIT=false`, and `NPM_CONFIG_LOGLEVEL=error` across [`mcp/mcp.template.json`](mcp/mcp.template.json), [`mcp/claude_desktop_config.example.json`](mcp/claude_desktop_config.example.json), and [`opencode.json`](opencode.json), and emitted Windows-safe `cmd /c npx` server entries in `sync-mcp`.
-
 ## [1.2.2] - 2026-11-18 — Safe Wedge Positioning & Trust Boundaries
-
 ### Changed
 - **Safe-Wedge Product Positioning & Documentation Consistency (`47` Consolidated Skills):**
   - Refactored [`README.md`](README.md) and [`README.ar.md`](README.ar.md) to lead with the **Safe Wedge** (fact-checked AI CV tailoring, ATS keyword heatmap, and interview dossier co-pilot with explicit "What it will NEVER do" boundaries), placed `/demo` and the live [`GitHub Pages Kanban Dashboard`](https://redasalem.github.io/job-hunter-os/demo-dashboard.html) preview directly under the hero, and synchronized all skill counts consistently (`47` consolidated skills: `29` core + `4` meta + `7` platforms + `7` ATS).
-- **Truthful Eval Disclaimers & Hard Approval/Pacing Boundaries:**
-  - Created [`evals/README.md`](evals/README.md) and updated [`README.md`](README.md) to state plainly that `bin/cli.mjs eval` (`--baseline`) is a **deterministic CI schema & fixture validator**, not a live multi-model benchmark score.
+... [lean-ctx: omitted 2 lines]
   - Strengthened [`skills/04-fill-and-apply.md`](skills/04-fill-and-apply.md) and [`docs/execution-safety.md`](docs/execution-safety.md) so the Live DOM Read-Back Table, explicit `APPROVE` gate, and `3–9 s` human pacing jitter are documented as non-negotiable operational trust boundaries.
-
 ## [1.2.1] - 2026-11-18 — Pre-Launch DX, Context & Honest Eval Hotfix
-
 ### Fixed
 - **Quick Start Command & Legacy Header Cleanup:**
   - Replaced un-published `npx job-hunter-os` references across `README.md`, `README.ar.md`, `llms.txt`, and `docs/` with `npx github:redasalem/job-hunter-os` so new users never hit an npm `404` before npm publishing is live.
   - Removed the legacy `<!-- LOVABLE:BEGIN --> ... <!-- LOVABLE:END -->` block (`supabase/migrations/`, `drizzle/`, `LOVABLE_API_KEY`) from `AGENTS.md`.
-- **Playwright MCP `stdio` Hang & PDF Capability:**
-  - Added `"-y"` and `"--caps=pdf"` to Playwright MCP configurations in `mcp/mcp.template.json`, `mcp/claude_desktop_config.example.json`, and `opencode.json`.
+... [lean-ctx: omitted 2 lines]
   - Added explicit `#grnhse_iframe` embed switching and click-to-mount portal `listbox` instructions to [`skills/04-fill-and-apply.md`](skills/04-fill-and-apply.md) and [`skills/platforms/ats-engines.md`](skills/platforms/ats-engines.md).
-- **Context Footprint (~86% Smaller `REGISTRY.md` & Focused `.agents/skills/`) & Unified Timing:**
-  - Compacted `skills/REGISTRY.md` from ~27 KB to ~4.6 KB while keeping all 47 skills indexed.
+... [lean-ctx: omitted 2 lines]
   - Trimmed `.agents/skills/` from 40 wrappers to the 12 primary user-facing entrypoints (`demo`, `setup`, `daily-run`, `apply-url`, `tailor-cv`, `weekly-report`, `linkedin-growth`, `offer-negotiator`, `recruiter-inbox-triage`, `rejection-pattern-analyzer`, `score-calibration`, `contract-and-nda-auditor`), enforced in CI.
-  - Unified timing rules across [`skills/04-fill-and-apply.md`](skills/04-fill-and-apply.md), [`skills/18-condition-based-browser-waiting.md`](skills/18-condition-based-browser-waiting.md), and [`docs/execution-safety.md`](docs/execution-safety.md) (condition-based snapshot checks first + single 3–9 s human pacing jitter between page submissions).
-- **Honest External Model Eval Grader & Auto-Deployed Pages:**
+... [lean-ctx: omitted 2 lines]
   - Added [`evals/PROMPT.md`](evals/PROMPT.md) and `eval --file <json>` / `--baseline` flags to [`bin/cli.mjs`](bin/cli.mjs), clearly labeling `--baseline` as **"Harness Reference Baseline (CI Self-Test)"**.
-  - Updated [`.github/workflows/pages.yml`](.github/workflows/pages.yml) to auto-deploy `docs/` on `main` pushes and updated preview links to `https://redasalem.github.io/job-hunter-os/demo-dashboard.html`.
-
+... [lean-ctx: omitted 1 lines]
 ## [1.2.0] - 2026-11-18 — The Verified & Consolidated Edition
-
 ### Added
 - **Deterministic Skill Evaluation Harness (`evals/` & `npx job-hunter-os eval`):**
   - 20 automated assertions (`EVAL-01`..`EVAL-20`) grading [`evals/results/baseline-verified-run.json`](evals/results/baseline-verified-run.json) against ground-truth [`evals/fixtures/candidate-profile.md`](evals/fixtures/candidate-profile.md), 5 edge-case job descriptions (`01-strong-match.md`, `02-prompt-injection-trap.md`, `03-ghost-expired-job.md`, `04-blacklist-duplicate.md`, `05-stretch-mismatch.md`), and 3 self-contained local HTML ATS form mocks (`greenhouse-mock.html`, `lever-mock.html`, `ashby-mock.html`).
-  - Executed on every commit in GitHub Actions across Linux, macOS, and Windows (`20/20` assertions passing).
+... [lean-ctx: omitted 1 lines]
 - **Platform Playbook 60-Day Freshness Audit (`last_verified` & `npx job-hunter-os doctor`):**
   - Added `last_verified: "2026-11-18"` frontmatter to all platform playbooks in `skills/platforms/` and upgraded `doctor` to warn automatically when any playbook exceeds 60 days without verification.
-  - Added [`.github/ISSUE_TEMPLATE/playbook-broke.md`](.github/ISSUE_TEMPLATE/playbook-broke.md) so contributors can report DOM changes with a redacted `browser_snapshot`.
-- **Arabic RTL Translation (`README.ar.md`), Trimmed `README.md` & Interactive Dashboard Preview (`docs/demo-dashboard.html`):**
-  - Created [`README.ar.md`](README.ar.md) (full RTL Arabic documentation).
+... [lean-ctx: omitted 3 lines]
   - Extracted deep reference tables into [`docs/SKILL_CATALOG.md`](docs/SKILL_CATALOG.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), and [`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md).
-  - Added pre-loaded interactive preview [`docs/demo-dashboard.html`](docs/demo-dashboard.html) and [`.github/workflows/pages.yml`](.github/workflows/pages.yml).
-
+... [lean-ctx: omitted 1 lines]
 ### Changed
 - **Consolidated & Deduplicated Skill Catalog (57 -> 47 High-Signal Skills, 41 -> 40 `.agents/skills/` Wrappers):**
   - Merged 10 duplicate single-board boilerplate files (`indeed.md`, `glassdoor.md`, `dice.md`, `ziprecruiter.md`, `weworkremotely.md`, `remoteok.md`, `welcometothejungle.md`, `builtin.md`, `wuzzuf.md`, `bayt.md`) into their canonical category playbooks ([`global-boards.md`](skills/platforms/global-boards.md), [`remote-boards.md`](skills/platforms/remote-boards.md), [`mena-boards.md`](skills/platforms/mena-boards.md)) and removed duplicate `.agents/skills/portfolio-auditor` in favor of `.agents/skills/portfolio-and-github-auditor`.
-- **Upgraded GitHub Actions to Node 24 Native (`@v5`):**
+... [lean-ctx: omitted 1 lines]
   - Upgraded `actions/checkout` and `actions/setup-node` to `@v5` across `.github/workflows/validate-repo.yml` and `.github/workflows/publish-npm.yml`.
-
 ## [1.1.0] - 2026-11-18 — Resilience, Security & Chaos Shield Edition
-
 ### Added
 - **3 New Security, Anti-Ban & Chaos-Resilience Skills (`57` Total Skills in `skills/REGISTRY.md` & `skills/skills-manifest.json`):**
   - [`skills/24-circuit-breaker-and-antiban.md`](skills/24-circuit-breaker-and-antiban.md): Defines immediate trip conditions (CAPTCHA, Cloudflare/DataDome/Arkose frames, HTTP 429/403 rate limits, unusual-activity banners, or forced login redirects) and persists a 24-hour platform lock in `logs/circuit-breaker.json`.
   - [`skills/25-prompt-injection-defense.md`](skills/25-prompt-injection-defense.md): Treats all scraped JDs and form labels inside `browser_snapshot` as `UNTRUSTED_EXTERNAL_DATA`, blocks indirect prompt injections and honeypot trap fields, and distinguishes benign recruiter Easter-egg attention checks (`"Include PINEAPPLE in cover letter"`) in the Mission Control Table.
   - [`skills/26-deduplication-and-blacklist-guard.md`](skills/26-deduplication-and-blacklist-guard.md): Enforces `blacklisted_companies` and `blacklisted_domains` in `context/preferences.yaml` plus cross-channel canonical job fingerprinting (`normalize(company)::normalize(role_title)`) against `logs/applications-log.json`.
-- **Pre-Submit Final DOM Read-Back & PDF Page-Overflow Gate:**
-  - Updated [`skills/04-fill-and-apply.md`](skills/04-fill-and-apply.md) to require a **Live DOM Read-Back Table** from a fresh `browser_snapshot` before requesting `APPROVE`, verifying attached `resume.pdf` filename, phone country code, dropdown values, and empty honeypot fields.
-  - Updated [`skills/03-tailor-resume-and-verify.md`](skills/03-tailor-resume-and-verify.md) and [`templates/ats-resume-template.html`](templates/ats-resume-template.html) with character/bullet budgets and `@media print` `orphans`/`widows`/`break-inside` rules to prevent 2-page orphan spills.
-- **CLI Crash Recovery (`unlock`), JSON Integrity Backup (`backup`) & Git Pre-Commit PII Shield (`bin/cli.mjs`):**
-  - `npx job-hunter-os unlock`: Safely removes stale Chromium lock files (`SingletonLock`, `SingletonCookie`, `SingletonSocket`, `lockfile`, `DevToolsActivePort`) from `browser-profile/` after a browser crash across Windows, macOS, and Linux.
+... [lean-ctx: omitted 5 lines]
   - `npx job-hunter-os backup`: Verifies JSON parse integrity of `logs/applications-log.json`, `logs/skipped-jobs.json`, and `logs/circuit-breaker.json` and snapshots `context/` + `logs/` into timestamped `logs/backups/backup-<timestamp>/` directories.
-  - Automatic `.git/hooks/pre-commit` PII & secret shield installed during `init` and `doctor` to block accidental commits of private `context/*`, `*.pdf`, `browser-profile/`, `logs/`, or API tokens (`ntn_`, `sk-`, `ghp_`).
-
+... [lean-ctx: omitted 1 lines]
 ## [1.0.0] - 2026-11-18
-
 ### Added
 - **54-Skill Progressive Disclosure Catalog (`skills/REGISTRY.md` & `skills/skills-manifest.json`):**
   - **25 Core & Career-Ops Playbooks (`00`–`23` + `fallback-no-mcp`):** Readiness Gatekeeper with live URL reachability verification (`00`), Daily Run Orchestrator (`00`), Pure-AI CV Ingestion (`01`), Batch Discovery, Ghost-Job Filter & Mission Control (`02`), Anti-Hallucination HTML/PDF Tailoring & Humanizer (`03`), Upload-First ATS Form Filling & `APPROVE` Gate (`04`), Interview Dossier & `<= 75`-Word Outreach (`05`), Local JSON + Optional Notion Sync & Weekly Reports (`06`), Multi-Persona Career Switcher (`07`), 7-Day Follow-Up Radar (`08`), Salary & B2B Rate Negotiator (`09`), Scheduled `/loop` Runner (`10`), GitHub & Portfolio Auditor (`11`), Recruiter Inbox Triage (`12`), Company Due Diligence & Health Badges (`13`), Privacy & PII Redaction Shield (`14`), Multilingual & RTL Adaptation (`15`), Rejection Pattern Analyzer (`16`), Score Calibration & Weight Tuner (`17`), Condition-Based Browser Waiting (`18`), On-Demand MCP Tool Routing (`19`), Skill Authoring Standard (`20`), ATS Keyword Heatmap (`21`), Technical Assessment Architect (`22`), and Employment Contract & B2B NDA Auditor (`23`).
-  - **4 Reliability Meta-Skills:** `meta-self-verification`, `meta-dom-recovery`, `meta-context-compaction`, and `meta-structured-debugging`.
+... [lean-ctx: omitted 1 lines]
   - **18 Job-Board & Regional Playbooks (`skills/platforms/`):** LinkedIn, Wellfound, Indeed, Glassdoor, WeWorkRemotely, RemoteOK, Welcome to the Jungle (Otta), BuiltIn, Dice, ZipRecruiter, Wuzzuf, Bayt, B2B Contract Networks (`Toptal`, `Braintrust`, `Lemon.io`, `Gun.io`, `Contra`, `Arc.dev`, `Turing`), plus regional/category routers (`global-boards`, `remote-boards`, `mena-boards`, `ats-engines`).
-  - **7 Employer ATS Engine Playbooks (`skills/ats/`):** Greenhouse, Lever, Ashby, SmartRecruiters, BreezyHR, Workday, and Taleo.
-- **Complete `agentskills.io` Auto-Discovery (`.agents/skills/*/SKILL.md`):**
+... [lean-ctx: omitted 2 lines]
   - Synchronized `SKILL.md` wrappers for all primary workflows (`00`–`23`), meta-skills, and slash-command entrypoints so `/skills` auto-discovers immediately in VS Code Copilot, Cursor, OpenAI Codex CLI, OpenCode, Goose, Amp, and Zed.
 - **Zero-Dependency Cross-Platform Node.js CLI (`bin/cli.mjs`) & OS One-Liners (`scripts/install.sh`, `scripts/install.ps1`):**
-  - Built strictly on Node.js 18+ built-in modules (`dependencies: {}`, `devDependencies: {}`).
+... [lean-ctx: omitted 1 lines]
   - Commands: `init [--global] [--ide <name>]`, `update`, `doctor` (with live profile/portfolio URL verifier), `status` (gates, warm-up cap & funnel summary), `bundle` (single-file web-chat master prompt exporter to `logs/exports/web-chat-master-prompt.md`), `dashboard` (local Kanban & analytics generator at `logs/exports/dashboard.html`), `login`, and `sync-mcp`.
-- **Zero-Server Local HTML Kanban & Analytics Dashboard (`templates/analytics-dashboard.html`):**
+... [lean-ctx: omitted 1 lines]
   - Single-file HTML/CSS/JS dashboard displaying KPI cards, 5-column lifecycle Kanban board (`Applied`, `Interviewing`, `Technical Assessment`, `Offer`, `Rejected / Ghosted`), platform yield breakdown, instant JSON file loader, and synthetic demo mode.
-- **15-Second Sandbox `/demo` Mode & Real Output Showcase (`examples/`):**
-  - Fictional profile, 3 sample JDs, and expected Mission Control output in `examples/sandbox-demo/`.
-  - Sample interview dossier, `<= 75`-word hiring manager outreach, and onboarding transcript in `examples/outputs/`.
-- **25+ AI IDE Entrypoints & 6 Model-Specific Tuning Guides (`adapters/`):**
-  - Native rules/workflows for Antigravity, Cursor, Claude Code, Claude Desktop, Gemini CLI, OpenAI Codex CLI, Devin Desktop / Windsurf, OpenCode, Kilo Code, Cline, Roo Code, JetBrains Junie, AWS Kiro, Trae, Zed, Goose, Aider, OpenHands, Warp, Augment, Crush, and GitHub Copilot.
-- **Ecosystem & Governance Standards:**
+... [lean-ctx: omitted 6 lines]
   - `PLATFORMS.md` compatibility matrix, `llms.txt` (`llmstxt.org` discovery), `HIRED.md` community success ledger, MIT `LICENSE`, `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, cross-OS GitHub Actions CI (`.github/workflows/validate-repo.yml`), and automated npm release workflow (`.github/workflows/publish-npm.yml`).
+
