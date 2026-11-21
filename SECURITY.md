@@ -1,7 +1,7 @@
 # Security and local-first privacy
 
 ## Scope and data boundaries
-`job-hunter-os` uses a **Markdown-first skills architecture paired with a zero-dependency Node.js CLI (`bin/cli.mjs`, `dependencies: {}`, `devDependencies: {}`)**. The AI model in your IDE executes workflows directly using IDE file tools, optional Playwright MCP, and optional Notion MCP—no backend server, database, background daemon, or cloud account is required. See [`docs/execution-safety.md`](docs/execution-safety.md) for the explicit distinction between **deterministic CLI enforcement** and **agent workflow requirements**. Private `context/` files, `logs/`, CVs/PDFs, screenshots, `browser-profile/`, `.env`, and local MCP settings are ignored by Git (and blocked by the `.git/hooks/pre-commit` PII shield installed by `init`/`doctor`). Examples in `demo/` and `*.example` are synthetic only.
+`veycraft` uses a **Markdown-first skills architecture paired with a zero-dependency Node.js CLI (`bin/cli.mjs`, `dependencies: {}`, `devDependencies: {}`)**. The AI model in your IDE executes workflows directly using IDE file tools, optional Playwright MCP, and optional Notion MCP—no backend server, database, background daemon, or cloud account is required. See [`docs/execution-safety.md`](docs/execution-safety.md) for the explicit distinction between **deterministic CLI enforcement** and **agent workflow requirements**. Private `context/` files, `logs/`, CVs/PDFs, screenshots, `browser-profile/`, `.env`, and local MCP settings are ignored by Git (and blocked by the `.git/hooks/pre-commit` PII shield installed by `init`/`doctor`). Examples in `demo/` and `*.example` are synthetic only.
 
 **Local-first is not absolute local-only privacy.** Your IDE/model may process chat/CV/files under its own provider policy. Job boards and employers receive what is submitted; optional Notion receives approved tracking records. Use a local model if your privacy requirements demand it.
 
@@ -19,7 +19,7 @@ Git ignore is an accidental-add safeguard, not encryption or history removal. Re
 - Unknown required answers go to `needs_review` with a local screenshot and a chat question. Confirmed receipt alone earns `applied`.
 
 ## Provenance & Cryptographic Signing
-- Canonical source of truth: **`https://github.com/redasalem/job-hunter-os`**, created and maintained by **Reda Salem (`@redasalem`)** — see [`NOTICE`](NOTICE), [`AUTHORS.md`](AUTHORS.md), [`PROVENANCE.json`](PROVENANCE.json), and [`.github/CODEOWNERS`](.github/CODEOWNERS).
+- Canonical source of truth: **`https://github.com/redasalem/veycraft`**, created and maintained by **Reda Salem (`@redasalem`)** — see [`NOTICE`](NOTICE), [`AUTHORS.md`](AUTHORS.md), [`PROVENANCE.json`](PROVENANCE.json), and [`.github/CODEOWNERS`](.github/CODEOWNERS).
 - All official commits and release tags (`v*`) on `main` are cryptographically signed with an Ed25519 SSH signing key registered to `@redasalem` and enforced via GitHub branch/tag protection.
 
 ## Vulnerability reporting

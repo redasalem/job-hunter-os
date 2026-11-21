@@ -1,6 +1,6 @@
 # Model Tuning Guide — OpenAI (GPT / o-series / Codex CLI)
 
-Optimized for **OpenAI Codex CLI**, **ChatGPT Desktop**, and **GPT / o-series** models running `job-hunter-os`.
+Optimized for **OpenAI Codex CLI**, **ChatGPT Desktop**, and **GPT / o-series** models running `veycraft`.
 
 ## 1. Deterministic JSON & YAML Schema Adherence
 - When updating `logs/applications-log.json`, `logs/skipped-jobs.json`, `logs/runs/YYYY-MM-DD.json`, or `logs/runs/current-session-checkpoint.json`, validate every required field before writing:

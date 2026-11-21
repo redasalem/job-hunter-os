@@ -183,12 +183,12 @@ jobs:
 
           notice = pathlib.Path("NOTICE").read_text(encoding="utf-8")
           assert "Copyright (c) 2026 Reda Salem (@redasalem)" in notice, "NOTICE copyright line mismatch"
-          assert "https://github.com/redasalem/job-hunter-os" in notice, "NOTICE canonical URL mismatch"
+          assert "https://github.com/redasalem/veycraft" in notice, "NOTICE canonical URL mismatch"
 
           prov = json.loads(pathlib.Path("PROVENANCE.json").read_text(encoding="utf-8"))
           assert prov.get("github_handle") == "redasalem", "PROVENANCE.json github_handle mismatch"
           assert prov.get("original_author") == "Reda Salem", "PROVENANCE.json original_author mismatch"
-          assert prov.get("canonical_repository") == "https://github.com/redasalem/job-hunter-os", "PROVENANCE.json canonical_repository mismatch"
+          assert prov.get("canonical_repository") == "https://github.com/redasalem/veycraft", "PROVENANCE.json canonical_repository mismatch"
           assert prov.get("verified_noreply_email") == "192090175+redasalem@users.noreply.github.com", "PROVENANCE.json verified_noreply_email mismatch"
           print("Provenance & attribution integrity check passed for all 5 required files.")
           PY
@@ -279,7 +279,7 @@ jobs:
           HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" CODEX_HOME="$ISO_HOME/.codex" node "$REPO_DIR/bin/cli.mjs" init --global
           HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" CODEX_HOME="$ISO_HOME/.codex" node "$REPO_DIR/bin/cli.mjs" doctor --global
 
-          test -f "$ISO_HOME/.job-hunter-os/AGENTS.md"
+          test -f "$ISO_HOME/.veycraft/AGENTS.md"
           test -f "$ISO_HOME/.agents/skills/daily-run/SKILL.md"
           test -f "$ISO_HOME/.agents/skills/quick-tailor/SKILL.md"
           test -f "$ISO_HOME/.codex/AGENTS.md"

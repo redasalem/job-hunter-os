@@ -1,6 +1,6 @@
 # Model Tuning Guide — Mistral (Large / Codestral / Vibe) & Meta Llama 4
 
-Optimized for **Mistral Large / Codestral / Mistral Vibe 3.0** and **Meta Llama 4** models running `job-hunter-os`.
+Optimized for **Mistral Large / Codestral / Mistral Vibe 3.0** and **Meta Llama 4** models running `veycraft`.
 
 ## 1. Strict JSON Extraction & Log Integrity
 - When parsing CVs (`skills/01-resume-ingestion.md`) or updating `logs/applications-log.json`, `logs/skipped-jobs.json`, and `logs/runs/YYYY-MM-DD.json`:

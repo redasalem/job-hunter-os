@@ -1,4 +1,4 @@
-# Job Hunter — Trae Project Rules
+# Veycraft — Trae Project Rules
 
 Read `AGENTS.md` and `skills/REGISTRY.md` first (progressive disclosure: load a full skill body only when its trigger matches the current phase of work).
 

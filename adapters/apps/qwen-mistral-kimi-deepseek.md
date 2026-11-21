@@ -1,6 +1,6 @@
 # Open-Model Frontier Harnesses (Qwen Code, Mistral Vibe, Kimi, DeepSeek, Grok Build)
 
-`job-hunter-os` supports open-weight and frontier CLI/IDE harnesses out of the box via `AGENTS.md`, `.agents/skills/*/SKILL.md`, and standard MCP JSON/TOML configuration.
+`veycraft` supports open-weight and frontier CLI/IDE harnesses out of the box via `AGENTS.md`, `.agents/skills/*/SKILL.md`, and standard MCP JSON/TOML configuration.
 
 ## 1. Qwen Code (`.qwen/settings.json`)
 Qwen Code reads `AGENTS.md` and `.agents/skills/` natively. Add Playwright MCP to `.qwen/settings.json` (gitignored if storing private env values):

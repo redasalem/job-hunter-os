@@ -1,9 +1,9 @@
 ---
 type: always_apply
-description: Canonical job-hunter-os rules with Progressive Disclosure and MCP safety guardrails
+description: Canonical veycraft rules with Progressive Disclosure and MCP safety guardrails
 ---
 
-# Job Hunter — Augment Code Rules
+# Veycraft — Augment Code Rules
 
 Read `AGENTS.md` and `skills/REGISTRY.md` first (Progressive Disclosure: load an individual `skills/*.md` playbook only when its trigger matches the current phase of work).
 

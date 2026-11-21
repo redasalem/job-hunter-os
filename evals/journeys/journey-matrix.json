@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "description": "Synthetic task-journey & LinkedIn/platform capability-fallback verification matrix for job-hunter-os.",
+  "description": "Synthetic task-journey & LinkedIn/platform capability-fallback verification matrix for veycraft.",
   "tool_scenarios": [
     {
       "id": "full_local_plus_playwright",

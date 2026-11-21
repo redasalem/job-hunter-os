@@ -1,6 +1,6 @@
 # Reproducible Cross-Model Skill Evaluation Prompt
 
-Use this prompt to benchmark **any AI model** (Claude, Gemini, GPT/Codex, DeepSeek, Qwen, Llama) cold against the `job-hunter-os` evaluation fixtures and grade the model's actual output with `node ./bin/cli.mjs eval --file <output.json>`.
+Use this prompt to benchmark **any AI model** (Claude, Gemini, GPT/Codex, DeepSeek, Qwen, Llama) cold against the `veycraft` evaluation fixtures and grade the model's actual output with `node ./bin/cli.mjs eval --file <output.json>`.
 
 ## How to Run an External Model Evaluation
 
@@ -18,7 +18,7 @@ Use this prompt to benchmark **any AI model** (Claude, Gemini, GPT/Codex, DeepSe
 ```text
 Read `AGENTS.md`, `skills/REGISTRY.md`, `evals/fixtures/candidate-profile.md`, all 5 job descriptions in `evals/fixtures/jds/`, and the 3 ATS form fixtures in `evals/fixtures/forms/`.
 
-Follow `job-hunter-os` rules strictly and return ONLY a single valid JSON object (no markdown commentary outside the JSON block) matching the schema of `evals/results/baseline-verified-run.json`:
+Follow `veycraft` rules strictly and return ONLY a single valid JSON object (no markdown commentary outside the JSON block) matching the schema of `evals/results/baseline-verified-run.json`:
 
 1. Evaluate `01-strong-match.md` against `evals/fixtures/candidate-profile.md`:
    - Score 0-10 (`tier`, `status`), capture any legitimate recruiter reading check (`attention_check_codeword`), compute Before vs. After ATS keyword match (`keyword_heatmap` isolating unverified tools like `Kubernetes` in `true_gaps`), and write a tailored 1-page A4 `tailored_resume` (`summary`, `bullets`, `rendered_line_count <= 38`, `page_count: 1`, `orphan_overflow: false`) + `application_note` with ZERO hallucinated metrics, ZERO forbidden skills (`Rust`, `Kubernetes`, `Solidity`, `Swift`), ZERO banned AI clichés, and ZERO prose em-dashes (`—`).

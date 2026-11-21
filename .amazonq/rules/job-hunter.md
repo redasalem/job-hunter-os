@@ -1,4 +1,4 @@
-# Job Hunter — Amazon Q CLI Rules
+# Veycraft — Amazon Q CLI Rules
 
 Read `AGENTS.md` and `skills/REGISTRY.md` first; load individual `skills/*.md` playbooks only when their trigger matches the active step.
 

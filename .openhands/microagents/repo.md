@@ -1,10 +1,10 @@
 ---
-name: job-hunter-os
+name: veycraft
 type: repo
 agent: CodeActAgent
 ---
 
-# Job Hunter — OpenHands Repository Microagent
+# Veycraft — OpenHands Repository Microagent
 
 Read `AGENTS.md` and `skills/REGISTRY.md` first (Progressive Disclosure: load an individual `skills/*.md` file only when its trigger matches the current phase).
 

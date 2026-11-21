@@ -1,14 +1,16 @@
-# Job Hunter OS
+# Veycraft
 
-### Truthful CV Tailoring & Career Workflows for the AI Agent You Already Use.
+### Agent-Native Career Operations & Profile Intelligence for the AI IDE You Already Use.
 
-Give your existing AI coding agent (**OpenAI Codex CLI, Claude Code, Cursor, Antigravity, Gemini CLI, GitHub Copilot, Windsurf, Cline, OpenCode**) one CV and one job description—or just ask in plain English or Arabic. Get a fact-checked tailored resume (`HTML` / `TXT` / Word-compatible `.doc`), a transparent **Evidence Map**, an **ATS Keyword Comparison**, and an explicit **True Gaps** list.
+*(Formerly `job-hunter-os` — GitHub redirects and legacy `job-hunter` / `job-hunter-os` CLI aliases remain supported.)*
+
+Give your existing AI coding agent (**OpenAI Codex CLI, Claude Code, Cursor, Antigravity, Gemini CLI, GitHub Copilot, Windsurf, Cline, OpenCode**) one CV and one job description—or just ask in plain English or Arabic. Get a fact-checked tailored resume (`HTML` / `TXT` / Word-compatible `.doc`), a transparent **Evidence Map**, an **ATS Keyword Comparison**, a schema-validated **Profile Intelligence** update plan, and an explicit **True Gaps** list.
 
 No fabricated experience. No blind submissions. No `npm install` bloat. No external API keys.
 
 **50 Markdown Skills** · **0 Core/Dev npm Dependencies** · **Local-First (`logs/`, `context/`)** · **Human `APPROVE` Gate**
 
-**[Interactive Demo ↗](https://redasalem.github.io/job-hunter-os/)** · **[Quick Start](#fastest-ways-to-get-started)** · **[AI Tool Setup](#installation--ai-tool-setup)** · **[CLI Reference](#cli-reference-binclimjs)** · **[العربية (RTL)](README.ar.md)**
+**[Interactive Demo ↗](https://redasalem.github.io/veycraft/)** · **[Quick Start](#fastest-ways-to-get-started)** · **[AI Tool Setup](#installation--ai-tool-setup)** · **[CLI Reference](#cli-reference-binclimjs)** · **[العربية (RTL)](README.ar.md)**
 
 [![Zero Core Dependencies](https://img.shields.io/badge/Core_CLI-0_NPM_Dependencies-2ea44f)](package.json)
 [![50 Markdown Skills](https://img.shields.io/badge/Skills-50_Markdown_Skills-167d60)](skills/REGISTRY.md)
@@ -16,7 +18,7 @@ No fabricated experience. No blind submissions. No `npm install` bloat. No exter
 
 ```bash
 # Try an instant offline hygiene audit on any .md, .txt, .docx, .html, or .doc resume (zero setup)
-npx github:redasalem/job-hunter-os audit ./resume.docx --share
+npx github:redasalem/veycraft audit ./resume.docx --share
 ```
 
 ---
@@ -25,7 +27,7 @@ npx github:redasalem/job-hunter-os audit ./resume.docx --share
 
 All names, employers, and metrics below come from synthetic repository fixtures ([`evals/fixtures/`](evals/fixtures/candidate-profile.md)) to illustrate the exact output produced by `/demo`, `/quick-tailor`, and natural-language CV tailoring:
 
-![Job Hunter OS — Truthful CV Tailoring Output Preview (Synthetic Demonstration Data)](assets/demo-preview.png)
+![Veycraft — Truthful CV Tailoring Output Preview (Synthetic Demonstration Data)](assets/demo-preview.png)
 
 | Input You Provide | Verified Output You Receive |
 |---|---|
@@ -57,7 +59,7 @@ All names, employers, and metrics below come from synthetic repository fixtures 
 You do **not** need browser login, Playwright MCP, or full `/setup` onboarding for standalone tasks:
 
 ### 1. Just Ask in Plain Language (Inside Any Supported AI IDE or CLI)
-Ask naturally—the **Universal Task Intent Router** ([`skills/REGISTRY.md`](skills/REGISTRY.md) & `job-hunter route`) loads only the minimal relevant skills without forcing `/setup`:
+Ask naturally—the **Universal Task Intent Router** ([`skills/REGISTRY.md`](skills/REGISTRY.md) & `veycraft route`) loads only the minimal relevant skills without forcing `/setup`:
 - *"Audit my CV at `./my-cv.docx` and show ATS gaps."*
 - *"Tailor my CV for this job description (never invent skills)."*
 - *"Change only the Professional Summary using my verified PostgreSQL latency metric."*
@@ -82,35 +84,41 @@ Ask naturally—the **Universal Task Intent Router** ([`skills/REGISTRY.md`](ski
 **Prerequisites:** Node.js `>= 18` on **macOS, Linux, or Windows**, plus any AI coding IDE or terminal agent you already use. Zero `npm install` dependencies required.
 
 ### Option A — Quick Global Setup (Recommended)
-Run once to install `~/.job-hunter-os`, link skills into your AI tools, and safely merge Playwright MCP **without overwriting your personal rules or custom TOML/JSON settings**:
+Run once to install `~/.veycraft` (existing `~/.job-hunter-os` checkouts are detected and preserved automatically), link skills into your AI tools, and safely merge Playwright MCP **without overwriting your personal rules or custom TOML/JSON settings**:
 
 ```bash
 # Install and configure all detected AI IDEs & CLI harnesses globally
-npx github:redasalem/job-hunter-os init --global
+npx github:redasalem/veycraft init --global
 
 # Or target a specific AI tool only:
-npx github:redasalem/job-hunter-os init --global --ide codex       # ~/.codex/AGENTS.md + config.toml + ~/.agents/skills
-npx github:redasalem/job-hunter-os init --global --ide gemini      # ~/.gemini/GEMINI.md + settings.json + ~/.gemini/skills
-npx github:redasalem/job-hunter-os init --global --ide claude      # ~/.claude/commands + ~/.claude/skills + ~/.claude.json
-npx github:redasalem/job-hunter-os init --global --ide cursor      # ~/.cursor/rules/job-hunter.mdc + ~/.cursor/mcp.json
-npx github:redasalem/job-hunter-os init --global --ide copilot     # ~/.copilot/copilot-instructions.md + mcp-config.json
-npx github:redasalem/job-hunter-os init --global --ide antigravity # ~/.gemini/antigravity/global_workflows + mcp_config.json
+npx github:redasalem/veycraft init --global --ide codex       # ~/.codex/AGENTS.md + config.toml + ~/.agents/skills
+npx github:redasalem/veycraft init --global --ide gemini      # ~/.gemini/GEMINI.md + settings.json + ~/.gemini/skills
+npx github:redasalem/veycraft init --global --ide claude      # ~/.claude/commands + ~/.claude/skills + ~/.claude.json
+npx github:redasalem/veycraft init --global --ide cursor      # ~/.cursor/rules/job-hunter.mdc + ~/.cursor/mcp.json
+npx github:redasalem/veycraft init --global --ide copilot     # ~/.copilot/copilot-instructions.md + mcp-config.json
+npx github:redasalem/veycraft init --global --ide antigravity # ~/.gemini/antigravity/global_workflows + mcp_config.json
 ```
 
 ### Option B — Clone Locally Inside a Workspace
 ```bash
-git clone https://github.com/redasalem/job-hunter-os.git
-cd job-hunter-os
+git clone https://github.com/redasalem/veycraft.git
+cd veycraft
 node ./bin/cli.mjs doctor
 ```
+
+> **Migrating an existing `job-hunter-os` clone?** GitHub redirects old URLs automatically, and you can update your remote cleanly with:
+> ```bash
+> git remote set-url origin https://github.com/redasalem/veycraft.git
+> ```
+> Existing `~/.job-hunter-os` directories and legacy CLI aliases (`job-hunter`, `job-hunter-os`) remain supported with zero data loss.
 
 *Supported `--ide` targets:* `all`, `codex`, `gemini`, `copilot`, `claude`, `cursor`, `antigravity`, `opencode`, `windsurf`, `devin`, `cline`, `roo`, `kiro`, `junie`, `zed`, `goose`, `aider` (see [`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md), [`adapters/apps/openai-codex-cli.md`](adapters/apps/openai-codex-cli.md), [`adapters/apps/gemini-and-copilot.md`](adapters/apps/gemini-and-copilot.md), and [`scripts/install.sh`](scripts/install.sh) / [`scripts/install.ps1`](scripts/install.ps1)).
 
 > **Optional Browser & Notion Setup (Only When Needed):**
 > ```bash
-> npx github:redasalem/job-hunter-os login --global    # Sign in once to private browser-profile/
-> npx github:redasalem/job-hunter-os sync-mcp --global # Sync Playwright (and Notion if NOTION_TOKEN is set)
-> npx github:redasalem/job-hunter-os doctor --global   # Verify gates, playbooks & IDE configs
+> npx github:redasalem/veycraft login --global    # Sign in once to private browser-profile/
+> npx github:redasalem/veycraft sync-mcp --global # Sync Playwright (and Notion if NOTION_TOKEN is set)
+> npx github:redasalem/veycraft doctor --global   # Verify gates, playbooks & IDE configs
 > ```
 > Local `.mcp.json`, `.cursor/mcp.json`, `.codex/config.toml`, `.gemini/settings.json`, and `.vscode/mcp.json` are automatically gitignored and protected by `.git/hooks/pre-commit`.
 
@@ -132,7 +140,7 @@ Every task classifies missing tools honestly (`A–E`) and automatically switche
 ## Repository Layout (Developer Map)
 
 ```text
-job-hunter-os/
+veycraft/
 ├── AGENTS.md                 # Canonical rules, NL contract, Capability Matrix (A–E), 10 Guardrails
 ├── bin/cli.mjs               # Zero-dependency Node CLI (init, audit, route, verify, eval, doctor, sync-mcp...)
 ├── skills/                   # 50 progressive-disclosure playbooks + REGISTRY.md + skills-manifest.json
@@ -154,7 +162,7 @@ job-hunter-os/
 
 ## Safety Architecture, Technical Proof & Evaluations
 
-Job Hunter OS clearly separates **code-enforced checks** from **LLM workflow instructions** (full details in [`docs/execution-safety.md`](docs/execution-safety.md)):
+Veycraft clearly separates **code-enforced checks** from **LLM workflow instructions** (full details in [`docs/execution-safety.md`](docs/execution-safety.md)):
 
 | Control Layer | What It Enforces | Concrete Examples |
 |---|---|---|
@@ -169,7 +177,7 @@ node ./bin/cli.mjs eval --journeys   # 7/7 node:test suites (26 NL prompts, 5 fa
 node ./bin/cli.mjs proof             # Regenerates logs/exports/proof-card.svg from live manifest & evals
 ```
 
-![Job Hunter OS Reproducible Proof Card](assets/proof-card.svg)
+![Veycraft Reproducible Proof Card](assets/proof-card.svg)
 
 > **Honest Eval Scope:** `eval --baseline`, `eval --journeys`, and `proof` perform **deterministic fixture, CLI, and integration verification** against [`evals/fixtures/ground-truth.json`](evals/fixtures/ground-truth.json) and [`evals/journeys/journey-matrix.json`](evals/journeys/journey-matrix.json)—they are **not** a benchmark of external live-model accuracy. External model outputs are graded via `eval --file evals/results/live-agent-eval-run.json` (`20/20 PASS`). Live browser automation depends on target portal layouts and user authentication.
 
@@ -193,7 +201,7 @@ node ./bin/cli.mjs proof             # Regenerates logs/exports/proof-card.svg f
 | `audit <cv.md\|txt\|docx\|html\|doc> [--share]` | Offline CV hygiene, word/page fit, metric/SSRF/token scan + shareable PII-safe SVG/MD card |
 | `route "<request>" [--json]` | Deterministic natural-language Task Intent Router showing matched skills, readiness & fallback |
 | `verify <dir\|file> [--facts <json\|md>]` | Post-write deliverable verifier (placeholders, fake `.docx`, prose em-dashes, unverified facts) |
-| `init [--global] [--force] [--ide <name>]` | Scaffold workspace or `~/.job-hunter-os`, install IDE skills/rules & sync MCP configs |
+| `init [--global] [--force] [--ide <name>]` | Scaffold workspace or `~/.veycraft` (preserving legacy `~/.job-hunter-os`), install IDE skills/rules & sync MCP configs |
 | `sync-mcp [--global]` | Safely merge Playwright (and optional Notion) into `.mcp.json`, Cursor, Claude, Codex `config.toml`, Gemini `settings.json`, Copilot & `.vscode/mcp.json` |
 | `doctor [--global] [--strict]` | Verify Node version, 5 gates, 50-skill manifest, `<60d` playbooks, links, PII hook & MCP files |
 | `eval [--baseline \| --file <json> \| --journeys]` | Run the 20 fixture assertions, external run grading, or 7 `node:test` integration suites |
@@ -209,7 +217,7 @@ node ./bin/cli.mjs proof             # Regenerates logs/exports/proof-card.svg f
 - [**`docs/ARCHITECTURE.md`**](docs/ARCHITECTURE.md) & [**`docs/SKILL_CATALOG.md`**](docs/SKILL_CATALOG.md) — 6-phase pipeline and complete `50`-skill index (`32` core, `4` meta, `7` platform, `7` ATS)
 - [**`docs/COMPATIBILITY.md`**](docs/COMPATIBILITY.md) & [**`docs/chat-commands.md`**](docs/chat-commands.md) — 25+ AI IDE setups, 6 LLM tuning guides, and command cheat sheet
 - [**`docs/execution-safety.md`**](docs/execution-safety.md), [**`SECURITY.md`**](SECURITY.md) & [**`CHANGELOG.md`**](CHANGELOG.md) — Safety boundaries, vulnerability disclosure, and release notes
-- [**`CONTRIBUTING.md`**](CONTRIBUTING.md) & [**`HIRED.md`**](HIRED.md) — Add ATS fixtures, regional board playbooks, IDE adapters, or share outcomes via [Share Outcome Issue](https://github.com/redasalem/job-hunter-os/issues/new?template=share-success.yml)
+- [**`CONTRIBUTING.md`**](CONTRIBUTING.md) & [**`HIRED.md`**](HIRED.md) — Add ATS fixtures, regional board playbooks, IDE adapters, or share outcomes via [Share Outcome Issue](https://github.com/redasalem/veycraft/issues/new?template=share-success.yml)
 
 ---
 

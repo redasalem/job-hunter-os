@@ -1,6 +1,6 @@
 # Model Tuning Guide — xAI Grok & Moonshot Kimi (K2 / Thinking)
 
-Optimized for **Grok (Grok Build / Grok 3/4)** and **Kimi (Kimi Code CLI / Kimi K2 Thinking)** agents running `job-hunter-os`.
+Optimized for **Grok (Grok Build / Grok 3/4)** and **Kimi (Kimi Code CLI / Kimi K2 Thinking)** agents running `veycraft`.
 
 ## 1. Long-Context Multi-Tab ATS Comparison
 - When an aggregator (LinkedIn, Indeed, RemoteOK) redirects to an employer ATS (`boards.greenhouse.io`, `jobs.lever.co`, `jobs.ashbyhq.com`), use long-context reasoning to cross-verify:

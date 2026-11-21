@@ -1,7 +1,8 @@
 {
   "schema_version": 1,
-  "project_name": "job-hunter-os",
-  "canonical_repository": "https://github.com/redasalem/job-hunter-os",
+  "project_name": "veycraft",
+  "former_project_name": "job-hunter-os",
+  "canonical_repository": "https://github.com/redasalem/veycraft",
   "original_author": "Reda Salem",
   "github_handle": "redasalem",
   "verified_noreply_email": "192090175+redasalem@users.noreply.github.com",

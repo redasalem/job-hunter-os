@@ -1,4 +1,4 @@
-# Aider configuration for job-hunter-os (Progressive Disclosure)
+# Aider configuration for veycraft (Progressive Disclosure)
 read:
   - AGENTS.md
   - skills/REGISTRY.md

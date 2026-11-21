@@ -1,6 +1,6 @@
-Job Hunter OS (redasalem/job-hunter-os)
+Veycraft (redasalem/veycraft; formerly job-hunter-os)
 Copyright (c) 2026 Reda Salem (@redasalem)
-Original Repository: https://github.com/redasalem/job-hunter-os
+Original Repository: https://github.com/redasalem/veycraft
 
 Original Creator, Lead Architect, and Copyright Holder:
   Reda Salem (GitHub: @redasalem — https://github.com/redasalem)
@@ -17,6 +17,6 @@ Under the terms of the MIT License (see LICENSE) and upstream provenance convent
 2. Non-Endorsement & Anti-Impersonation:
    You may NOT misrepresent the origin of this Software, strip or replace
    "@redasalem" in original authorship records, claim original creation of
-   job-hunter-os, or use the name of Reda Salem (@redasalem) to endorse or
-   promote derived forks, commercial SaaS wrappers, or npm packages without
-   prior written permission from the copyright holder.
+   Veycraft (formerly job-hunter-os), or use the name of Reda Salem (@redasalem)
+   to endorse or promote derived forks, commercial SaaS wrappers, or npm packages
+   without prior written permission from the copyright holder.

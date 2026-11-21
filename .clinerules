@@ -1,4 +1,4 @@
-# Job Hunter — Cline / Roo
+# Veycraft — Cline / Roo
 
 Read [AGENTS.md](./AGENTS.md) and [skills/REGISTRY.md](./skills/REGISTRY.md) first; route natural-language requests via `skills/REGISTRY.md` without forcing `/setup` for standalone tasks, and load only the active skill bodies needed.
 

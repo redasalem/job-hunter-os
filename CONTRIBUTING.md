@@ -1,6 +1,6 @@
-# Contributing to Job Hunter OS
+# Contributing to Veycraft
 
-`job-hunter-os` uses a **Markdown-first architecture with a supported, zero-dependency Node.js CLI (`bin/cli.mjs`)**.
+`veycraft` uses a **Markdown-first architecture with a supported, zero-dependency Node.js CLI (`bin/cli.mjs`)**.
 
 Every contribution must preserve the foundational constraints:
 

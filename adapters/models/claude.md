@@ -1,6 +1,6 @@
 # Model Tuning Guide — Anthropic Claude (Sonnet / Opus)
 
-Optimized for **Claude Code**, **Claude Desktop**, and **Claude API** agents running `job-hunter-os`.
+Optimized for **Claude Code**, **Claude Desktop**, and **Claude API** agents running `veycraft`.
 
 ## 1. Strict YAML Skill Routing
 - Read `AGENTS.md` and `skills/REGISTRY.md` once at session start.

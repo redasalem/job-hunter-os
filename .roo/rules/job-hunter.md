@@ -1,4 +1,4 @@
-# Job Hunter — Roo Code Rules
+# Veycraft — Roo Code Rules
 
 Read `AGENTS.md` and `skills/REGISTRY.md` first; only load a full skill body when its trigger matches the current phase of work.
 

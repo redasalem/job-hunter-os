@@ -12,6 +12,7 @@ const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..
 const CLI = [
   process.env.JHO_CLI_PATH,
   path.join(REPO_ROOT, 'bin', 'cli.mjs'),
+  path.join(os.homedir(), '.veycraft', 'bin', 'cli.mjs'),
   path.join(os.homedir(), '.job-hunter-os', 'bin', 'cli.mjs'),
 ].find(p => p && fs.existsSync(p));
 assert.ok(CLI, 'Could not locate bin/cli.mjs (set JHO_CLI_PATH or run from repository root).');
@@ -435,7 +436,7 @@ test('7. Multi-IDE Adapter Setup: OpenAI Codex CLI (TOML + AGENTS.md), Gemini CL
     // Check OpenAI Codex CLI files + preservation
     const agentsAfter = fs.readFileSync(codexAgents, 'utf8');
     assert.match(agentsAfter, /# Personal Codex Coding Rules/);
-    assert.match(agentsAfter, /<!-- job-hunter-os:start -->/);
+    assert.match(agentsAfter, /<!-- veycraft:start -->/);
     assert.match(agentsAfter, /AGENTS\.md/);
     const tomlAfter = fs.readFileSync(codexToml, 'utf8');
     assert.match(tomlAfter, /model = "gpt-5"/);

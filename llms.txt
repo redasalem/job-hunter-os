@@ -1,4 +1,4 @@
-# Job Hunter OS (`redasalem/job-hunter-os`)
+# Veycraft (`redasalem/veycraft`)
 
 > Truthful CV tailoring for the AI agent you already use — local-first, Markdown-first AI career operations framework (48 skills) with a zero-dependency Node.js CLI (`dependencies: {}`, `devDependencies: {}`), fact-checked resume diffs, ATS keyword comparison, explicit True Gaps, and unconditional job-specific human `APPROVE` gates. Works across 25+ AI coding apps & CLIs with optional Playwright MCP and optional Notion MCP.
 
@@ -8,7 +8,7 @@
 - [skills/REGISTRY.md](skills/REGISTRY.md): Consolidated 48-skill routing index (triggers, preconditions, verification contracts).
 - [skills/skills-manifest.json](skills/skills-manifest.json): Machine-readable JSON catalog of all 48 consolidated skills.
 - [docs/execution-safety.md](docs/execution-safety.md): Explicit separation of deterministic CLI enforcement (`bin/cli.mjs`) vs. agent workflow requirements (`AGENTS.md`, `skills/*.md`).
-- [evals/README.md](evals/README.md) & [evals/RUBRIC.md](evals/RUBRIC.md): Deterministic CI schema & fixture validator (`npx github:redasalem/job-hunter-os eval --baseline` or `--file <output.json>`).
+- [evals/README.md](evals/README.md) & [evals/RUBRIC.md](evals/RUBRIC.md): Deterministic CI schema & fixture validator (`npx github:redasalem/veycraft eval --baseline` or `--file <output.json>`).
 - [evals/PROMPT.md](evals/PROMPT.md): Zero-shot reproducible evaluation prompt for external LLMs.
 - [PLATFORMS.md](PLATFORMS.md): Global job board, B2B contract network, regional portal, and employer ATS compatibility matrix.
 - [HIRED.md](HIRED.md): Authentic community outcomes ledger (strictly separated from maintainer origin).

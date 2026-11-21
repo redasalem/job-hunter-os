@@ -1,6 +1,6 @@
 # Consolidated 50-Skill Catalog & URL Construction Guide
 
-Every skill in `job-hunter-os` (`50` consolidated skills total: `32` core/career playbooks, `4` `meta-*` skills, `7` platform playbooks, and `7` ATS engines) follows the **`agentskills.io` / `SKILL.md` progressive disclosure standard** (`skills/REGISTRY.md` & `skills/skills-manifest.json`), loading only when its trigger matches the active phase of work.
+Every skill in `veycraft` (`50` consolidated skills total: `32` core/career playbooks, `4` `meta-*` skills, `7` platform playbooks, and `7` ATS engines) follows the **`agentskills.io` / `SKILL.md` progressive disclosure standard** (`skills/REGISTRY.md` & `skills/skills-manifest.json`), loading only when its trigger matches the active phase of work.
 
 ---
 
@@ -53,7 +53,7 @@ Every skill in `job-hunter-os` (`50` consolidated skills total: `32` core/career
 
 ## 3. Consolidated Platform & Employer ATS Playbooks (14 Playbooks)
 
-All platform playbooks carry `last_verified: "2026-11-18"` in YAML frontmatter (audited for 60-day freshness by `npx github:redasalem/job-hunter-os doctor`):
+All platform playbooks carry `last_verified: "2026-11-18"` in YAML frontmatter (audited for 60-day freshness by `npx github:redasalem/veycraft doctor`):
 
 | Platform / Family | URL Template Pattern | Consolidated Playbook |
 |---|---|---|

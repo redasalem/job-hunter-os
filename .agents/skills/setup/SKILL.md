@@ -3,7 +3,7 @@ name: setup
 description: Load when the owner wants to initialize or audit their job-hunting profile, ingest a CV, confirm legal/compensation answers, or verify Playwright MCP login (/setup).
 ---
 
-# Job Hunter Setup
+# Veycraft Setup
 
 1. Read `AGENTS.md` and `skills/REGISTRY.md` first (Progressive Disclosure).
 2. Follow `.agent/workflows/setup.md`, `skills/00-interrogate-and-onboard.md`, and `skills/01-resume-ingestion.md` completely.

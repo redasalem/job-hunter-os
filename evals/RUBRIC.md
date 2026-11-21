@@ -1,6 +1,6 @@
 # Skill Evaluation Harness Rubric (`eval --baseline` / `--file`)
 
-This directory contains the deterministic evaluation suite that checks whether a model's output JSON obeys `job-hunter-os` safety, anti-hallucination, security, and form-filling invariants.
+This directory contains the deterministic evaluation suite that checks whether a model's output JSON obeys `veycraft` safety, anti-hallucination, security, and form-filling invariants.
 
 ## Running the Eval Suite
 
