@@ -28,12 +28,14 @@ jobs:
           node-version: "22"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Verify zero-dependency CLI, package syntax & Skill Eval Harness
+      - name: Verify zero-dependency CLI, package contents & Skill Eval Harness
         run: |
           node --check bin/cli.mjs
+          node --check bin/profile-intelligence.mjs
           node ./bin/cli.mjs eval --baseline
           node ./bin/cli.mjs eval --file evals/results/live-agent-eval-run.json
           node ./bin/cli.mjs eval --journeys
+          npm run pack:check
           node -e "const p=JSON.parse(require('fs').readFileSync('package.json','utf8')); if(Object.keys(p.dependencies||{}).length || Object.keys(p.devDependencies||{}).length) { process.exit(1); }"
 
       - name: Publish to npm with OIDC Sigstore Provenance (when NPM_TOKEN secret is configured)

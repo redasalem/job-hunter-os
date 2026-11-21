@@ -128,8 +128,13 @@ const PRIMARY_GLOBAL_ROOT = path.join(HOME, '.veycraft');
 const LEGACY_GLOBAL_ROOT = path.join(HOME, '.job-hunter-os');
 
 function resolveGlobalRoot() {
+  const customHome = process.env.VEYCRAFT_HOME && process.env.VEYCRAFT_HOME.trim();
+  if (customHome) return path.resolve(customHome);
   if (fs.existsSync(PRIMARY_GLOBAL_ROOT)) return PRIMARY_GLOBAL_ROOT;
   if (fs.existsSync(LEGACY_GLOBAL_ROOT)) return LEGACY_GLOBAL_ROOT;
+  if (process.platform === 'linux' && process.env.XDG_DATA_HOME && path.isAbsolute(process.env.XDG_DATA_HOME.trim())) {
+    return path.join(process.env.XDG_DATA_HOME.trim(), 'veycraft');
+  }
   return PRIMARY_GLOBAL_ROOT;
 }
 
@@ -141,7 +146,8 @@ function hasInstallMarker(dir) {
 }
 
 function isGlobalRoot(root = ROOT) {
-  return isSamePath(root, PRIMARY_GLOBAL_ROOT) || isSamePath(root, LEGACY_GLOBAL_ROOT);
+  const candidates = [PRIMARY_GLOBAL_ROOT, LEGACY_GLOBAL_ROOT, resolveGlobalRoot()];
+  return candidates.some(c => isSamePath(root, c));
 }
 
 function resolveRoot() {
@@ -1037,34 +1043,55 @@ async function cmdDoctor() {
   let criticalFailures = 0;
   let readinessPending = 0;
   const isGlobal = opts.global || isGlobalRoot(ROOT);
+  const jsonMode = Boolean(opts.json);
+  const { version, runtimeDeps, devDeps } = readPackageMeta();
+  const logOk = msg => { if (!jsonMode) ok(msg); };
+  const logWarn = msg => { if (!jsonMode) warn(msg); };
+  const logInfo = msg => { if (!jsonMode) info(msg); };
+  const logFail = msg => { if (!jsonMode) fail(msg); };
 
-  console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
-  console.log(paint('36', `Veycraft Doctor — ${ROOT}\n`));
+  if (!jsonMode) {
+    console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
+    console.log(paint('36', `Veycraft Doctor — ${ROOT}\n`));
+  }
 
   const nodeMajor = Number(process.versions.node.split('.')[0]);
-  if (nodeMajor >= 18) ok(`OS & Runtime: ${process.platform} (${os.arch()}) · Node ${process.versions.node}`);
-  else { fail(`Node.js 18+ required (found ${process.versions.node})`); criticalFailures++; }
+  const nodeOk = nodeMajor >= 18;
+  if (nodeOk) logOk(`OS & Runtime: ${process.platform} (${os.arch()}) · Node ${process.versions.node}`);
+  else { logFail(`Node.js >= 18 required (found ${process.versions.node}). Upgrade from https://nodejs.org/.`); criticalFailures++; }
 
   const installed = hasInstallMarker(ROOT) || fs.existsSync(path.join(ROOT, 'AGENTS.md'));
-  if (installed) ok(`Agent Home: ${ROOT} (${isGlobal ? 'global' : 'local'})`);
-  else { fail(`Agent Home not initialized at ${ROOT}; run \`init\``); criticalFailures++; }
+  if (installed) {
+    logOk(`Agent Home: ${ROOT} (${isGlobal ? 'global' : 'local'})`);
+  } else {
+    logWarn(`Agent Home: not yet initialized at ${ROOT} — run \`veycraft init --global\` (recommended) or \`veycraft init\``);
+    readinessPending++;
+  }
 
-  if (fs.existsSync(path.join(ROOT, 'skills', 'REGISTRY.md'))) {
-    let manifestCount = null;
+  const registryRoot = fs.existsSync(path.join(ROOT, 'skills', 'REGISTRY.md'))
+    ? ROOT
+    : (fs.existsSync(path.join(SOURCE, 'skills', 'REGISTRY.md')) ? SOURCE : null);
+  let manifestCount = null;
+  if (registryRoot) {
     try {
-      const mPath = [path.join(ROOT, 'skills', 'skills-manifest.json'), path.join(SOURCE, 'skills', 'skills-manifest.json')].find(f => fs.existsSync(f));
+      const mPath = [path.join(registryRoot, 'skills', 'skills-manifest.json'), path.join(SOURCE, 'skills', 'skills-manifest.json')].find(f => fs.existsSync(f));
       if (mPath) {
         const parsed = JSON.parse(fs.readFileSync(mPath, 'utf8'));
         if (Array.isArray(parsed?.skills)) manifestCount = parsed.skills.length;
       }
     } catch { /* ignore */ }
-    ok(`Skill Registry: skills/REGISTRY.md present${manifestCount !== null ? ` (${manifestCount} skills in manifest)` : ''}`);
-  } else { fail('Missing skills/REGISTRY.md'); criticalFailures++; }
+    const suffix = registryRoot === ROOT ? '' : ' (bundled in CLI package)';
+    logOk(`Skill Registry: skills/REGISTRY.md present${manifestCount !== null ? ` (${manifestCount} skills in manifest)` : ''}${suffix}`);
+  } else {
+    logFail('Missing skills/REGISTRY.md');
+    criticalFailures++;
+  }
 
-  // Provenance & Attribution Guard (strict canonical field validation)
+  // Provenance & Attribution Guard (strict canonical field validation; checks installed ROOT or bundled SOURCE before init)
+  const provenanceRoot = installed ? ROOT : SOURCE;
   const missingOrTampered = [];
   for (const rel of ['NOTICE', 'AUTHORS.md', 'PROVENANCE.json']) {
-    const f = path.join(ROOT, rel);
+    const f = path.join(provenanceRoot, rel);
     if (!fs.existsSync(f)) {
       missingOrTampered.push(`${rel} (missing)`);
       continue;
@@ -1098,18 +1125,19 @@ async function cmdDoctor() {
       missingOrTampered.push(`${rel} (unreadable/invalid)`);
     }
   }
-  if (missingOrTampered.length > 0) {
-    fail(`Provenance verification FAILED (tampered or uncredited clone): ${missingOrTampered.join(', ')}`);
+  const provenanceVerified = missingOrTampered.length === 0;
+  if (!provenanceVerified) {
+    logFail(`Provenance verification FAILED (tampered or uncredited clone): ${missingOrTampered.join(', ')}`);
     criticalFailures++;
   } else {
-    ok('Provenance & Attribution: NOTICE, AUTHORS.md & PROVENANCE.json canonical fields verified (@redasalem)');
+    logOk(`Provenance & Attribution: NOTICE, AUTHORS.md & PROVENANCE.json canonical fields verified (@redasalem)${installed ? '' : ' [package]'}`);
   }
 
   // Platform Playbook Freshness Check (warn when last_verified > 60 days old)
   const platDir = [path.join(ROOT, 'skills', 'platforms'), path.join(SOURCE, 'skills', 'platforms')].find(d => fs.existsSync(d));
+  let verifiedPlaybooks = 0;
+  const stalePlaybooks = [];
   if (platDir) {
-    const stalePlaybooks = [];
-    let verifiedPlaybooks = 0;
     for (const entry of fs.readdirSync(platDir, { withFileTypes: true })) {
       if (!entry.isFile() || !entry.name.endsWith('.md') || entry.name.startsWith('_') || entry.name === 'README.md') continue;
       const text = fs.readFileSync(path.join(platDir, entry.name), 'utf8');
@@ -1126,16 +1154,16 @@ async function cmdDoctor() {
       }
     }
     if (stalePlaybooks.length > 0) {
-      warn(`Platform Playbook Freshness (>60d stale): ${stalePlaybooks.join(', ')}`);
+      logWarn(`Platform Playbook Freshness (>60d stale): ${stalePlaybooks.join(', ')}`);
     } else if (verifiedPlaybooks > 0) {
-      ok(`Platform Playbook Freshness: ${verifiedPlaybooks} playbook(s) verified within 60 days`);
+      logOk(`Platform Playbook Freshness: ${verifiedPlaybooks} playbook(s) verified within 60 days`);
     }
   }
 
   // Readiness gates (warning unless --strict)
   const checkGate = (label, cond, hint) => {
-    if (cond) ok(label);
-    else { warn(`${label} — ${hint}`); readinessPending++; }
+    if (cond) logOk(label);
+    else { logWarn(`${label} — ${hint}`); readinessPending++; }
   };
 
   const gates = evaluateGates(ROOT);
@@ -1147,35 +1175,45 @@ async function cmdDoctor() {
   // Profile & Resume Live Link Verifier
   const linkAudit = await verifyProfileLinks(ROOT, gates.profReady);
   if (linkAudit.deadUrls.length > 0) {
-    warn(`Profile & Resume Links: ${linkAudit.deadUrls.length} broken/dead URL(s): ${linkAudit.deadUrls.join(', ')}`);
+    logWarn(`Profile & Resume Links: ${linkAudit.deadUrls.length} broken/dead URL(s): ${linkAudit.deadUrls.join(', ')}`);
     readinessPending++;
   } else if (linkAudit.placeholderCount > 0) {
-    info(`Profile & Resume Links: ${linkAudit.placeholderCount} placeholder URL(s) in context/ (replace via /setup)`);
+    logInfo(`Profile & Resume Links: ${linkAudit.placeholderCount} placeholder URL(s) in context/ (replace via /setup)`);
   } else if (linkAudit.validSyntax > 0) {
-    ok(`Profile & Resume Links: ${linkAudit.validSyntax} well-formed URL(s) verified`);
+    logOk(`Profile & Resume Links: ${linkAudit.validSyntax} well-formed URL(s) verified`);
   }
 
   const profileExists = fs.existsSync(path.join(ROOT, 'browser-profile'));
   checkGate('Browser Profile Directory', profileExists, 'run `login` to initialize browser-profile/');
 
-  if (installGitPreCommitHook(ROOT)) {
-    ok('Git Pre-Commit PII Shield: .git/hooks/pre-commit active');
+  const preCommitActive = installGitPreCommitHook(ROOT);
+  if (preCommitActive) {
+    logOk('Git Pre-Commit PII Shield: .git/hooks/pre-commit active');
   }
 
   // MCP configs
+  const mcpStatus = [];
   for (const file of mcpTargetFiles(ROOT, isGlobal)) {
     if (!fs.existsSync(file)) {
-      info(`MCP Config: ${file} (not created yet — run sync-mcp if using this IDE)`);
+      logInfo(`MCP Config: ${file} (not created yet — run sync-mcp if using this IDE)`);
+      mcpStatus.push({ file, status: 'not_created' });
       continue;
     }
     try {
       const cfg = readJsonSafe(file);
       const args = cfg?.mcpServers?.playwright?.args || [];
       const hasDir = Array.isArray(args) && args.some(a => typeof a === 'string' && a.startsWith('--user-data-dir='));
-      if (hasDir) ok(`MCP Config: ${file}`);
-      else { warn(`MCP Config: ${file} missing playwright --user-data-dir`); readinessPending++; }
-    } catch (e) {
-      fail(`MCP Config invalid JSON: ${file}`);
+      if (hasDir) {
+        logOk(`MCP Config: ${file}`);
+        mcpStatus.push({ file, status: 'ok' });
+      } else {
+        logWarn(`MCP Config: ${file} missing playwright --user-data-dir`);
+        mcpStatus.push({ file, status: 'missing_user_data_dir' });
+        readinessPending++;
+      }
+    } catch {
+      logFail(`MCP Config invalid JSON: ${file}`);
+      mcpStatus.push({ file, status: 'invalid_json' });
       criticalFailures++;
     }
   }
@@ -1185,26 +1223,40 @@ async function cmdDoctor() {
       try {
         const cfg = readJsonSafe(vsFile);
         const args = cfg?.servers?.playwright?.args || [];
-        if (Array.isArray(args) && args.some(a => typeof a === 'string' && a.startsWith('--user-data-dir='))) ok(`VS Code MCP Config: ${vsFile}`);
-        else warn(`VS Code MCP Config: ${vsFile} missing playwright --user-data-dir`);
+        if (Array.isArray(args) && args.some(a => typeof a === 'string' && a.startsWith('--user-data-dir='))) {
+          logOk(`VS Code MCP Config: ${vsFile}`);
+          mcpStatus.push({ file: vsFile, status: 'ok' });
+        } else {
+          logWarn(`VS Code MCP Config: ${vsFile} missing playwright --user-data-dir`);
+          mcpStatus.push({ file: vsFile, status: 'missing_user_data_dir' });
+        }
       } catch {
-        fail(`VS Code MCP Config invalid JSON: ${vsFile}`);
+        logFail(`VS Code MCP Config invalid JSON: ${vsFile}`);
+        mcpStatus.push({ file: vsFile, status: 'invalid_json' });
         criticalFailures++;
       }
     } else {
-      info(`VS Code MCP Config: ${vsFile} (not created yet — run sync-mcp if using VS Code/Copilot)`);
+      logInfo(`VS Code MCP Config: ${vsFile} (not created yet — run sync-mcp if using VS Code/Copilot)`);
+      mcpStatus.push({ file: vsFile, status: 'not_created' });
     }
   }
   const codexToml = codexConfigTomlPath(ROOT, isGlobal);
   if (fs.existsSync(codexToml)) {
     const toml = fs.readFileSync(codexToml, 'utf8');
-    if (/^\s*\[mcp_servers\.playwright\]/m.test(toml) && toml.includes('--user-data-dir=')) ok(`Codex MCP Config: ${codexToml}`);
-    else warn(`Codex MCP Config: ${codexToml} missing [mcp_servers.playwright] --user-data-dir`);
+    if (/^\s*\[mcp_servers\.playwright\]/m.test(toml) && toml.includes('--user-data-dir=')) {
+      logOk(`Codex MCP Config: ${codexToml}`);
+      mcpStatus.push({ file: codexToml, status: 'ok' });
+    } else {
+      logWarn(`Codex MCP Config: ${codexToml} missing [mcp_servers.playwright] --user-data-dir`);
+      mcpStatus.push({ file: codexToml, status: 'missing_user_data_dir' });
+    }
   } else {
-    info(`Codex MCP Config: ${codexToml} (not created yet — run sync-mcp if using OpenAI Codex CLI)`);
+    logInfo(`Codex MCP Config: ${codexToml} (not created yet — run sync-mcp if using OpenAI Codex CLI)`);
+    mcpStatus.push({ file: codexToml, status: 'not_created' });
   }
 
   // Global IDE discovery folders (informational)
+  const globalIdePaths = [];
   if (isGlobal) {
     for (const [label, p] of [
       ['~/.agents/skills', path.join(HOME, '.agents', 'skills')],
@@ -1216,15 +1268,70 @@ async function cmdDoctor() {
       ['~/.cursor/rules/job-hunter.mdc', path.join(HOME, '.cursor', 'rules', 'job-hunter.mdc')],
       ['~/.gemini/antigravity/global_workflows', path.join(HOME, '.gemini', 'antigravity', 'global_workflows')],
     ]) {
-      if (fs.existsSync(p)) ok(`Global IDE Path: ${label}`);
-      else warn(`Global IDE Path missing: ${label} (run init --global)`);
+      const exists = fs.existsSync(p);
+      globalIdePaths.push({ label, path: p, present: exists });
+      if (exists) logOk(`Global IDE Path: ${label}`);
+      else logWarn(`Global IDE Path missing: ${label} (run init --global)`);
     }
   }
 
-  info(`Optional NOTION_TOKEN: ${process.env.NOTION_TOKEN ? 'present (value hidden)' : 'not set (local JSON mode active)'}`);
-  if (readinessPending > 0) {
+  logInfo(`Optional NOTION_TOKEN: ${process.env.NOTION_TOKEN ? 'present (value hidden)' : 'not set (local JSON mode active)'}`);
+  const nextSteps = [];
+  if (!installed) {
+    nextSteps.push('Run `veycraft init --global` (recommended) or `veycraft init` in your workspace to scaffold skills and IDE configs.');
+  }
+  nextSteps.push('Start safely in your AI IDE with `/demo` (zero personal data) or `/quick-tailor` (1 CV + 1 JD, no browser login).');
+  if (gates.passed < gates.total) {
+    nextSteps.push('For full browser-assisted workflows later, run `veycraft login` and `/setup` in your AI IDE.');
+  }
+
+  if (jsonMode) {
+    const payload = {
+      product: 'veycraft',
+      version,
+      node: process.versions.node,
+      node_ok: nodeOk,
+      platform: process.platform,
+      arch: os.arch(),
+      scope: isGlobal ? 'global' : 'local',
+      root: ROOT,
+      global_root: resolveGlobalRoot(),
+      package_source: SOURCE,
+      initialized: installed,
+      skills_count: manifestCount,
+      provenance_verified: provenanceVerified,
+      provenance_source: provenanceRoot,
+      provenance_issues: missingOrTampered,
+      playbooks_verified: verifiedPlaybooks,
+      stale_playbooks: stalePlaybooks,
+      gates: {
+        cv_and_profile: gates.g1,
+        target_preferences: gates.g2,
+        legal_comp_skills: gates.g3,
+        enabled_targets: gates.g5,
+        passed: gates.passed,
+        total: gates.total,
+      },
+      browser_profile_present: profileExists,
+      git_pre_commit_shield: preCommitActive,
+      notion_token_set: Boolean(process.env.NOTION_TOKEN),
+      mcp_configs: mcpStatus,
+      global_ide_paths: globalIdePaths,
+      zero_dependencies: { runtime: runtimeDeps, dev: devDeps },
+      safe_defaults: { dry_run_default: true, explicit_approve_required: true },
+      readiness_pending: readinessPending,
+      critical_failures: criticalFailures,
+      ok: criticalFailures === 0 && (!opts.strict || readinessPending === 0),
+      next_steps: nextSteps,
+    };
+    console.log(JSON.stringify(payload, null, 2));
+  } else if (readinessPending > 0) {
     console.log('');
-    info(`${readinessPending} setup item(s) pending. Open ${ROOT} in your AI IDE and type /setup.`);
+    if (!installed) {
+      info('Not initialized yet. Run `veycraft init --global` (recommended) or `veycraft init` inside a workspace.');
+    } else {
+      info(`${readinessPending} setup item(s) pending. Open ${ROOT} in your AI IDE and type /setup (or start immediately with /demo or /quick-tailor).`);
+    }
   }
   if (criticalFailures > 0 || (opts.strict && readinessPending > 0)) process.exitCode = 1;
 }
@@ -1371,6 +1478,18 @@ function cmdStatus() {
     const [name, st] = sorted[0];
     const pct = ((st.callbacks / st.submitted) * 100).toFixed(0);
     topPlatform = `${name} (${st.callbacks}/${st.submitted} callbacks · ${pct}%)`;
+  }
+
+  if (opts.json) {
+    console.log(JSON.stringify({
+      product: 'veycraft',
+      root: ROOT,
+      readiness_gates: { passed: gateScore, total: gates.total, ready: gateScore === gates.total },
+      daily_cap: { today: todayApplied, effective_cap: effectiveCap, max_per_day: maxPerDay, warmup_active: warmupActive, dry_run: dryRun },
+      pipeline: { applied: totalApplied, interviewing, assessment, offers, rejected_or_ghosted: rejected },
+      top_platform: topPlatform,
+    }, null, 2));
+    return;
   }
 
   console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
@@ -2682,7 +2801,20 @@ function cmdVerify() {
 }
 
 function cmdVersion() {
-  const { version } = readPackageMeta();
+  const { version, runtimeDeps, devDeps } = readPackageMeta();
+  if (opts.json) {
+    console.log(JSON.stringify({
+      name: 'veycraft',
+      version,
+      repository: 'https://github.com/redasalem/veycraft',
+      author: 'Reda Salem (@redasalem)',
+      node: process.versions.node,
+      platform: process.platform,
+      arch: os.arch(),
+      zero_dependencies: { runtime: runtimeDeps, dev: devDeps },
+    }, null, 2));
+    return;
+  }
   console.log(`v${version}`);
   console.log(ATTRIBUTION_BANNER);
 }
@@ -2693,30 +2825,39 @@ function cmdHelp() {
 veycraft v${version} — Agent-Native Career Operations & Profile Intelligence Engine (Zero-Dependency CLI)
 Legacy CLI aliases \`job-hunter\` and \`job-hunter-os\` remain supported for backwards compatibility.
 
-Usage:
-  veycraft init [--global | -g] [--force] [--ide <name>]   Scaffold agent home & sync IDE skills/MCP
-  veycraft audit <cv.md|txt|docx|html|doc> [--share]       Instant offline CV hygiene audit + scorecard
-  veycraft route "<request>" [--json]                      Route natural-language task to minimal skills
-  veycraft verify <dir|file> [--facts <json|md>]           Post-write deliverable, format & fact check
-  veycraft proof [--global | -g]                 Generate reproducible proof-card.svg & proof-card.md in logs/exports/
-  veycraft eval [--baseline | --file <json> | --journeys]  Grade Baseline, external JSON, or synthetic journeys
-  veycraft pre-submit [--draft <f> | --text <t>] Deterministically enforce <=75-word cap & daily warm-up limit
-  veycraft doctor [--global | -g] [--strict]     Run installation, readiness, live URL & strict provenance checks
-  veycraft status [--global | -g]                Print readiness gates, daily warm-up cap & pipeline funnel summary
-  veycraft bundle [--global | -g]                Export single-file web-chat prompt to logs/exports/web-chat-master-prompt.md
-  veycraft dashboard [--global | -g] [--no-open] Generate & open local Kanban dashboard at logs/exports/dashboard.html
-  veycraft unlock [--global | -g]                Safely remove stale Chromium lock files (refuses active PIDs)
-  veycraft backup [--global | -g]                Verify JSON log integrity & snapshot context/ + logs/ to logs/backups/
-  veycraft login [--global | -g]                 Open Chrome/Chromium with persistent browser-profile/
-  veycraft sync-mcp [--global | -g]              Safely merge Playwright & optional Notion MCP configs
-  veycraft update [--global | -g] [--ide <name>] Verify SSH signature & refresh playbooks (preserves context/ & logs/)
-  veycraft --version | -v                        Print version & canonical creator attribution
-  veycraft --help                                Show this help message`);
+Quick Start:
+  veycraft doctor [--json]                         Verify runtime, provenance & workspace readiness (read-only)
+  veycraft init [--global | -g] [--ide <name>]     Scaffold agent home & sync AI IDE skills/MCP (non-destructive)
+  veycraft route "<request>" [--json]              Route natural-language career task to minimal skills
+  veycraft audit <cv.md|txt|docx|html|doc> [--share] Instant offline CV hygiene audit + PII-safe scorecard
+
+Core & Verification Commands:
+  veycraft verify <dir|file> [--facts <json|md>]   Validate deliverables, Profile Update Plans & fact integrity
+  veycraft pre-submit [--draft <f> | --text <t>]   Enforce <=75-word outreach cap & daily warm-up limit
+  veycraft eval [--baseline | --file <json> | --journeys] Run deterministic safety assertions & journey tests
+  veycraft proof [--global | -g]                   Generate reproducible proof-card.svg & proof-card.md
+  veycraft status [--global | -g] [--json]         Print readiness gates, warm-up cap & pipeline funnel summary
+
+Workspace & Maintenance Commands:
+  veycraft sync-mcp [--global | -g]                Safely merge Playwright & optional Notion MCP configs
+  veycraft login [--global | -g]                   Open Chrome/Chromium with persistent browser-profile/
+  veycraft bundle [--global | -g]                  Export single-file web-chat prompt bundle
+  veycraft dashboard [--global | -g] [--no-open]   Generate local Kanban dashboard at logs/exports/dashboard.html
+  veycraft backup [--global | -g]                  Verify JSON logs & snapshot context/ + logs/ to logs/backups/
+  veycraft unlock [--global | -g]                  Remove stale Chromium lock files (refuses active PIDs)
+  veycraft update [--global | -g] [--ide <name>]   Verify SSH signature & refresh playbooks (preserves user data)
+
+Info & Safety:
+  veycraft --version | -v [--json]                 Print version & canonical creator attribution
+  veycraft --help | -h                             Show this help message (safe, read-only)
+  Uninstall CLI only (preserves ~/.veycraft data): npm uninstall -g veycraft`);
 }
 
 // ---------------- dispatch ----------------
 try {
-  if (Number(process.versions.node.split('.')[0]) < 18) throw new Error('Node.js 18+ is required.');
+  if (Number(process.versions.node.split('.')[0]) < 18) {
+    throw new Error(`Node.js >= 18 is required (found ${process.versions.node}). Upgrade from https://nodejs.org/.`);
+  }
   if (argErr) throw new Error(argErr);
   if (opts.version || command === 'version') cmdVersion();
   else if (command === 'help' || opts.help) cmdHelp();
