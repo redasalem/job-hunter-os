@@ -10,5 +10,6 @@ This is a **Markdown-first career operations repository with a zero-dependency N
 - `/tailor-cv <url>` -> `skills/03-tailor-resume-and-verify.md` (never submits)
 - `/weekly-report` -> `skills/06-log-and-insights.md`
 - `/linkedin-growth` -> `skills/linkedin-growth.md` + `skills/05-outreach-and-interview-prep.md` (`DRAFT_ONLY` default; explicit `APPROVE` + snapshot verification for live edits)
+- `/profile-update` -> `skills/profile-intelligence-engine.md` (multi-platform profile audit, schema-valid `schemas/profile-update-plan.schema.json`, `DRAFT_ONLY` consolidated diff, batch-fill & read-back verification)
 
 Connect MCP using `mcp/mcp.template.json` (or `mcp/claude_desktop_config.example.json` for Claude Desktop; persistent `./browser-profile` for Playwright and optional `NOTION_TOKEN` for Notion). See `adapters/models/claude.md` for Claude Sonnet/Opus XML verification tuning. Local JSON under `logs/` is primary. Never invent facts, bypass challenges, or submit without gate checks.

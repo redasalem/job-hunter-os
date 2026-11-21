@@ -8,6 +8,7 @@ import crypto from 'node:crypto';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { spawnSync, spawn } from 'node:child_process';
+import { validateProfileUpdatePlan, validateProfileVault } from './profile-intelligence.mjs';
 
 const SOURCE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const HOME = os.homedir();
@@ -1680,7 +1681,10 @@ function cmdEval() {
     }
     const { version } = readPackageMeta();
     console.log(paint('36', `\nJob Hunter OS — Synthetic Task-Journey Test Matrix (v${version})`));
-    const res = spawnSync(process.execPath, ['--test', journeyTest], {
+    const testFiles = [journeyTest];
+    const profileTest = path.join(evalRoot, 'profile-intelligence.test.mjs');
+    if (fs.existsSync(profileTest)) testFiles.push(profileTest);
+    const res = spawnSync(process.execPath, ['--test', ...testFiles], {
       stdio: 'inherit',
       env: { ...process.env, JHO_CLI_PATH: fileURLToPath(import.meta.url) },
     });
@@ -2308,13 +2312,31 @@ const ROUTE_RULES = [
   {
     intent: 'linkedin-profile',
     match: q => /(^|\s)\/linkedin-growth\b/i.test(q) || (/\blinkedin\b/i.test(q) && /\b(profile|headline|about|consistent|optimize|audit|review|improve|post|outreach)\b/i.test(q) && !/\b(job|apply|jobs)\b/i.test(q)) || /\b(profile consistent with my cv|optimize my profile)\b/i.test(q),
-    skills: ['linkedin-growth', '03-tailor-resume-and-verify', '05-outreach-and-interview-prep', 'meta-self-verification'],
+    skills: ['linkedin-growth', 'profile-intelligence-engine', '03-tailor-resume-and-verify', '05-outreach-and-interview-prep', 'meta-self-verification'],
     workflow: '.agent/workflows/linkedin-growth.md',
     readiness: 'task-specific (profile text/PDF/screenshot or signed-in Playwright + CV facts; no /setup required)',
     required_inputs: ['LinkedIn profile (pasted, PDF, screenshot, or signed-in Playwright)', 'verified CV facts'],
     optional_tools: ['playwright (for read-only profile read or APPROVE-gated live edit)'],
     fallback: 'Works 100% offline from pasted profile text, Save-to-PDF, or screenshots as DRAFT_ONLY',
     outputs: ['0-100 scorecard & CV consistency gaps', 'DRAFT_ONLY Before/After copy in logs/insights/linkedin-seo-audit-YYYY-MM-DD.md'],
+  },
+  {
+    intent: 'profile-intelligence',
+    match: q =>
+      /(^|\s)\/profile-update\b/i.test(q) ||
+      /(?:بروفايل|ملفي المهني|الملف المهني)/i.test(q) ||
+      (
+        /\b(optimize|improve|update|sync|tailor|review|fill|audit)\b/i.test(q) &&
+        /\b(professional profile|career profile|job profile|job board profiles?|linkedin profile|github profile|portfolio profile|my profile|profile fields?|profiles? across|headline and about)\b/i.test(q) &&
+        !/\bfind\b.*\bjobs?\b/i.test(q)
+      ),
+    skills: ['profile-intelligence-engine', '01-resume-ingestion', '03-tailor-resume-and-verify', 'meta-self-verification'],
+    workflow: '.agent/workflows/profile-update.md',
+    readiness: 'task-specific (verified CV/profile facts + target role/goal; no /setup required)',
+    required_inputs: ['verified CV/profile facts', 'target role, JD, or positioning goal'],
+    optional_tools: ['playwright (optional for live platform read, batch-fill, and read-back verification)'],
+    fallback: 'Works 100% offline as a DRAFT_ONLY Profile Update Plan (schemas/profile-update-plan.schema.json) from pasted/exported profile data',
+    outputs: ['logs/insights/profile-update-plan-<platform>-YYYY-MM-DD.json', 'Consolidated field-level diff & truthful verification summary'],
   },
   {
     intent: 'interview-prep',
@@ -2499,6 +2521,24 @@ function verifyArtifactFile(filePath, factsConfig = null) {
       extractDocxText(rawBuf);
     } catch (e) {
       errors.push(`${name}: ${e.message}`);
+    }
+    return { name, errors, warnings };
+  }
+  if (ext === '.json') {
+    let parsed;
+    try {
+      parsed = JSON.parse(rawBuf.toString('utf8'));
+    } catch (e) {
+      errors.push(`${name}: invalid JSON (${e.message})`);
+      return { name, errors, warnings };
+    }
+    if (isObj(parsed) && Object.prototype.hasOwnProperty.call(parsed, 'schema_version') && Object.prototype.hasOwnProperty.call(parsed, 'changes')) {
+      const res = validateProfileUpdatePlan(parsed, { factsConfig });
+      return { name, errors: res.errors.map(err => `${name}: ${err}`), warnings: res.warnings };
+    }
+    if (isObj(parsed) && Object.prototype.hasOwnProperty.call(parsed, 'fact_provenance')) {
+      const res = validateProfileVault(parsed);
+      return { name, errors: res.errors.map(err => `${name}: ${err}`), warnings: res.warnings };
     }
     return { name, errors, warnings };
   }

@@ -8,12 +8,12 @@
 
 بدون خبرات مختلقة. بدون إرسال أعمى. بدون تبعيات `npm install`. بدون مفاتيح `API` خارجية. أنت دائمًا صاحب القرار.
 
-**48 مهارة Markdown** · **0 تبعيات npm أساسية** · **محلي بالكامل (`Local-First`)** · **بتحكم بشري كامل**
+**50 مهارة Markdown** · **0 تبعيات npm أساسية** · **محلي بالكامل (`Local-First`)** · **بتحكم بشري كامل**
 
 **[معاينة تفاعلية ↗](https://redasalem.github.io/job-hunter-os/)** · **[طرق البداية السريعة](#أسرع-طرق-البداية-بدون-تعقيد-إعداد-مسبق)** · **[التثبيت وربط أدوات AI](#التثبيت-وربط-أدوات-الذكاء-الاصطناعي)** · **[مرجع أوامر CLI](#مرجع-أوامر-cli-binclimjs)** · **[English](README.md)**
 
 [![Zero Core Dependencies](https://img.shields.io/badge/Core_CLI-0_NPM_Dependencies-2ea44f)](package.json)
-[![48 Markdown Skills](https://img.shields.io/badge/Skills-48_Markdown_Skills-167d60)](skills/REGISTRY.md)
+[![50 Markdown Skills](https://img.shields.io/badge/Skills-50_Markdown_Skills-167d60)](skills/REGISTRY.md)
 [![MIT License](https://img.shields.io/badge/License-MIT-2ea44f)](LICENSE)
 
 <div dir="ltr" align="left">
@@ -81,7 +81,8 @@ npx github:redasalem/job-hunter-os audit ./resume.docx --share
 | **1. تجربة فورية** | `/demo` | محاكاة اصطناعية خلال 15 ثانية عبر 3 وظائف تجريبية ([`examples/sandbox-demo/`](examples/sandbox-demo/sample-jds.md)) مع معاينة جاهزة للوظيفة الأولى | **لا يتطلب أي بيانات أو متصفح** |
 | **2. أول سيرة حقيقية** | `/quick-tailor` | قراءة سيرتك + وصف وظيفة واحدة، تأكيد الحقائق، وإنتاج `HTML/TXT/.doc` مع `True Gaps` وفحص `verify` | **سيرتك + وظيفة واحدة فقط** (بدون دخول) |
 | **3. بروفايل LinkedIn** | `/linkedin-growth` | تقييم (`0–100`) ومطابقة مع الـ CV واقتراحات `DRAFT_ONLY` (أي تعديل حي محمي بـ `APPROVE`) | **نص/PDF/صورة البروفايل** |
-| **4. النظام الكامل (اختياري)** | `login` ← `/setup` ← `/daily-run` | اكتشاف متعدد المصادر، فلترة الوظائف الوهمية، وتجهيز نماذج ATS بموافقة `APPROVE` | **متصفح + 5 بوابات جاهزية** |
+| **4. محرك ذكاء البروفايل** | `/profile-update` | تحليل ومزامنة البروفايل عبر LinkedIn ومواقع التوظيف بخطة تعديلات `DRAFT_ONLY` محققة بالمخطط والتحقق بعد الحفظ | **بيانات الـ CV + الدور المستهدف** |
+| **5. النظام الكامل (اختياري)** | `login` ← `/setup` ← `/daily-run` | اكتشاف متعدد المصادر، فلترة الوظائف الوهمية، وتجهيز نماذج ATS بموافقة `APPROVE` | **متصفح + 5 بوابات جاهزية** |
 
 ---
 
@@ -143,8 +144,8 @@ node ./bin/cli.mjs doctor
 job-hunter-os/
 ├── AGENTS.md                 # القواعد الأساسية، عقد المحادثة، مصفوفة البدائل (A–E)، والضوابط الـ 10
 ├── bin/cli.mjs               # أداة CLI خالية من التبعيات (init, audit, route, verify, eval, doctor, sync-mcp...)
-├── skills/                   # 48 مهارة Markdown + الفهرس REGISTRY.md + skills-manifest.json
-├── .agents/skills/           # 13 غلاف auto-discovery متوافق مع agentskills.io
+├── skills/                   # 50 مهارة Markdown + الفهرس REGISTRY.md + skills-manifest.json
+├── .agents/skills/           # 14 غلاف auto-discovery متوافق مع agentskills.io
 ├── .agent/workflows/         # مسارات أوامر المحرر (/demo, /quick-tailor, /setup, /daily-run...)
 ├── adapters/                 # أدلة ربط 25+ أداة ذكاء اصطناعي و6 عائلات نماذج
 ├── templates/                # قوالب HTML أحادية العمود للـ CV وخطاب التغطية ولوحة Kanban
@@ -185,7 +186,7 @@ node ./bin/cli.mjs proof             # إعادة توليد بطاقة الإث
 | `verify <dir\|file> [--facts <json\|md>]` | التحقق بعد الكتابة من خلو الملفات من `{{...}}` وشرطات AI والأرقام/المهارات غير المؤكدة |
 | `init [--global] [--force] [--ide <name>]` | تهيئة المجلد أو `~/.job-hunter-os` وربط المهارات وإعدادات MCP للمحرّرات |
 | `sync-mcp [--global]` | مزامنة آمنة لـ Playwright وNotion في Codex `config.toml` وGemini `settings.json` و`.vscode/mcp.json` وCursor وClaude وCopilot |
-| `doctor [--global] [--strict]` | فحص البيئة والبوابات الـ 5 و`48` مهارة وحداثة الكتيبات وخطاف الخصوصية |
+| `doctor [--global] [--strict]` | فحص البيئة والبوابات الـ 5 و`50` مهارة وحداثة الكتيبات وخطاف الخصوصية |
 | `eval [--baseline \| --file <json> \| --journeys]` | تشغيل الاختبارات الـ 20، أو تقييم مخرجات نموذج خارجي، أو اختبارات الرحلات السبع |
 | `pre-submit [--draft <f> \| --text <t>]` | التحقق الحتمي من حد `<= 75` كلمة وحدود الإحماء اليومية |
 | `proof` / `status` / `dashboard [--no-open]` | توليد بطاقة الإثبات، عرض ملخص الطلبات، أو فتح لوحة Kanban المحلية |
@@ -199,5 +200,17 @@ node ./bin/cli.mjs proof             # إعادة توليد بطاقة الإث
 - **المساهمات مرحب بها:** إضافة نماذج ATS تجريبية، أو توثيق بوابات توظيف إقليمية، أو تحسين تكامل محرّرات الذكاء الاصطناعي، أو مشاركة نتيجة توظيف عبر [Share Outcome Issue](https://github.com/redasalem/job-hunter-os/issues/new?template=share-success.yml).
 
 مرخص تحت رخصة [MIT](LICENSE) — Copyright (c) 2026 Reda Salem (`@redasalem`). راجع [`NOTICE`](NOTICE) و[`AUTHORS.md`](AUTHORS.md) و[`PROVENANCE.json`](PROVENANCE.json).
+
+---
+
+## محرك ذكاء البروفايل (`/profile-update`)
+
+طبقة ذكاء مشتركة وخالية من التبعيات (`skills/profile-intelligence-engine.md`، `bin/profile-intelligence.mjs`، `schemas/profile-update-plan.schema.json`) لتحسين ومزامنة ملفك المهني عبر LinkedIn وبوابات التوظيف الأخرى بصدق وكفاءة:
+
+- **التشغيل:** اكتب `/profile-update` أو اطلب بلغة طبيعية (*"حسّن ملفي المهني"*، *"حدّث بروفايلي لهذه الوظيفة"*، *"زامن ملفي عبر مواقع التوظيف"*).
+- **تحليل شامل ونزاهة الحقائق:** يقيّم الملاءمة، الكلمات المفتاحية، الوضوح، الأثر، التناسق، قابلية الاكتشاف، والجودة بالاعتماد على مخزن الحقائق المحلي (`schemas/resume-data.schema.json`) مع فصل تام بين الحقائق المؤكدة والاستنتاجات والبيانات الناقصة.
+- **مسودة أولاً ومراجعة موحّدة:** يُنشئ خطة تعديلات (`add` و`replace` فقط بدون أي حذف `remove`) مع تخطي الحقول غير المتغيرة وعرض جدول مراجعة واحد شامل قبل أي تنفيذ.
+- **محوّلات المنصات والتحقق الصادق:** يدعم محوّلات صريحة لـ `linkedin` و`wellfound` و`ats` و`job_boards` و`portfolio` ووضع `generic` الاحتياطي (قراءة/مسودة فقط للمواقع غير المعروفة). أي حفظ حي يتطلب موافقة صريحة (`APPROVE`) وجلسة مصرح بها، ويتم التحقق بعد الحفظ بقراءة حية (`verified` / `partially_applied` / `not_verified` / `blocked`).
+- **التحقق عبر CLI والدوال البرمجية:** استخدم `node ./bin/cli.mjs verify <plan.json>` (أو `verify <resume-data.json>`) للتحقق الحتمي عبر CLI، بينما يوفّر `bin/profile-intelligence.mjs` دوال برمجية قابلة للاستيراد (`getPlatformAdapter`, `validateProfileUpdatePlan`, `validateProfileVault`, `formatConsolidatedReview`, `summarizeVerificationOutcome`).
 
 </div>
