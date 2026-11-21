@@ -3,7 +3,7 @@
 ## Original Creator & Lead Architect
 
 - **Reda Salem** ([@redasalem](https://github.com/redasalem)) — Original Creator, Lead Architect, and Copyright Holder (`2026`).
-  - Canonical Repository: [https://github.com/redasalem/job-hunter-os](https://github.com/redasalem/job-hunter-os)
+  - Canonical Repository: [https://github.com/redasalem/veycraft](https://github.com/redasalem/veycraft) *(formerly `redasalem/job-hunter-os`)*
   - Verified Git Commit Author Identity: `redasalem <192090175+redasalem@users.noreply.github.com>`
 
 ## Attribution Policy for Forks & Derivatives

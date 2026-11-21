@@ -1,4 +1,4 @@
-# Job Hunter — JetBrains AI Assistant Rules
+# Veycraft — JetBrains AI Assistant Rules
 
 Read `AGENTS.md` and `skills/REGISTRY.md` first; route natural-language requests via `skills/REGISTRY.md` without forcing `/setup` for standalone tasks, and load individual `skills/*.md` playbooks only when triggered.
 

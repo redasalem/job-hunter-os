@@ -1,6 +1,6 @@
 # Global Platforms, Regional Portals & ATS Compatibility Matrix
 
-`job-hunter-os` connects your AI agent to global job boards, remote-first portals, curated B2B contract networks, regional boards, and employer Applicant Tracking Systems (ATS) through **Playwright MCP** playbooks—zero brittle scrapers or custom API keys required.
+`veycraft` connects your AI agent to global job boards, remote-first portals, curated B2B contract networks, regional boards, and employer Applicant Tracking Systems (ATS) through **Playwright MCP** playbooks—zero brittle scrapers or custom API keys required.
 
 > Want to add a new job board or regional portal? Pick an entry marked **Help Wanted** below and submit a PR using our [New Platform Request template](.github/ISSUE_TEMPLATE/new-platform-request.md) + [CONTRIBUTING.md](CONTRIBUTING.md).
 

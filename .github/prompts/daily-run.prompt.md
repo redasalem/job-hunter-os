@@ -1,6 +1,6 @@
 ---
 mode: agent
-description: Run today's authorized job-hunter-os workflow with readiness gates, ghost filtering, CV tailoring, and approval safety
+description: Run today's authorized veycraft workflow with readiness gates, ghost filtering, CV tailoring, and approval safety
 ---
 
 Read `AGENTS.md` and `skills/REGISTRY.md` first, then execute `skills/00-daily-run.md` in strict order:

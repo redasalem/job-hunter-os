@@ -1,11 +1,11 @@
 ---
 name: skill-authoring-standard
 version: "1.0.0"
-description: Load whenever creating, refactoring, auditing, or contributing a new skill or job-board playbook to job-hunter-os; combines Anthropic official Skill Creator progressive-disclosure rules, agentskills.io auto-discovery conventions, TDD pressure-testing discipline, and job-hunter-os CI schema verification.
+description: Load whenever creating, refactoring, auditing, or contributing a new skill or job-board playbook to veycraft; combines Anthropic official Skill Creator progressive-disclosure rules, agentskills.io auto-discovery conventions, TDD pressure-testing discipline, and veycraft CI schema verification.
 triggers:
   - author a new skill or platform playbook
   - edit or audit an existing skill
-  - prepare skill PR for job-hunter-os
+  - prepare skill PR for veycraft
 requires_mcp:
   - none
 preconditions:
@@ -25,7 +25,7 @@ verification:
 
 Ensures every community-contributed career skill, ATS playbook, or regional board guide triggers reliably, fits within lean context budgets, and passes CI on the first run.
 
-- **Load when:** `author a new skill or platform playbook`; `edit or audit an existing skill`; `prepare skill PR for job-hunter-os`.
+- **Load when:** `author a new skill or platform playbook`; `edit or audit an existing skill`; `prepare skill PR for veycraft`.
 - **Preconditions (stop if any is false):**
   - desired capability does not duplicate an existing entry in `skills/REGISTRY.md`
   - `.github/workflows/validate-repo.yml` checks are readable
@@ -38,7 +38,7 @@ Ensures every community-contributed career skill, ATS playbook, or regional boar
 2. **Design for Progressive Disclosure (`< 500` Lines):**
    - Keep the main skill Markdown concise and actionable (`~40–150` lines ideal; strictly under `500` lines).
    - Write in clear **imperative steps** and explain *why* non-obvious constraints exist.
-3. **Follow Exact `job-hunter-os` + `agentskills.io` Contract:**
+3. **Follow Exact `veycraft` + `agentskills.io` Contract:**
    - **Location:** core/career skills live at `skills/<NN>-<slug>.md`; job boards live at `skills/platforms/<board>.md` (start from `skills/platforms/_template.md`); employer ATS guides live at `skills/ats/<engine>.md`.
    - **8 Required YAML Frontmatter Keys:** `name`, `version`, `description` (explicitly state *when to trigger* and what contexts activate it — never spoil a shortcut summary of the whole workflow so models still read the body), `triggers`, `requires_mcp` (strictly required MCPs: `playwright`, `notion`, or `none`; add optional `optional_mcp` when an MCP only enhances optional steps such as PDF printing or Notion sync), `preconditions`, `requires_skills` (matching existing `name`s), and `verification`.
    - **3 Mandatory Exact H2 Headings:**

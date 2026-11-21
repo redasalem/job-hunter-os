@@ -1,6 +1,6 @@
 ---
-name: Job Hunter OS
-description: Progressive disclosure rules for job-hunter-os Markdown skills and MCP workflows
+name: Veycraft
+description: Progressive disclosure rules for veycraft Markdown skills and MCP workflows
 alwaysApply: true
 ---
 

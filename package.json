@@ -1,17 +1,19 @@
 {
-  "name": "job-hunter-os",
-  "version": "1.5.0",
+  "name": "veycraft",
+  "version": "2.0.0",
   "type": "module",
-  "description": "Truthful CV tailoring for the AI agent you already use — local-first Markdown skills and zero-dependency CLI with fact-checked resume diffs, ATS keyword comparison, and human APPROVE gates.",
+  "description": "Veycraft — Agent-native career operations & Profile Intelligence Engine for the AI agent you already use. Zero-dependency CLI, 50 Markdown skills, truthful CV tailoring, and human APPROVE gates.",
   "license": "MIT",
+  "homepage": "https://redasalem.github.io/veycraft/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/redasalem/job-hunter-os.git"
+    "url": "https://github.com/redasalem/veycraft.git"
   },
   "engines": {
     "node": ">=18"
   },
   "bin": {
+    "veycraft": "./bin/cli.mjs",
     "job-hunter": "./bin/cli.mjs",
     "job-hunter-os": "./bin/cli.mjs"
   },

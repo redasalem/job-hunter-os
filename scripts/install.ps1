@@ -1,9 +1,16 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
-$RepoUrl = "https://github.com/redasalem/job-hunter-os.git"
-$HomeDir = Join-Path $HOME ".job-hunter-os"
+$RepoUrl = "https://github.com/redasalem/veycraft.git"
+$PrimaryHome = Join-Path $HOME ".veycraft"
+$LegacyHome = Join-Path $HOME ".job-hunter-os"
+if ((Test-Path $PrimaryHome) -or (-not (Test-Path $LegacyHome))) {
+  $HomeDir = $PrimaryHome
+} else {
+  $HomeDir = $LegacyHome
+  Write-Host "[veycraft] Detected existing legacy checkout at $HomeDir; preserving it in place."
+}
 
-Write-Host "[job-hunter-os] Installing to $HomeDir..."
+Write-Host "[veycraft] Installing to $HomeDir..."
 
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
   Write-Error "git is required."
@@ -11,7 +18,8 @@ if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
 }
 
 if (Test-Path (Join-Path $HomeDir ".git")) {
-  Write-Host "[job-hunter-os] Updating existing checkout (preserving context/, logs/, browser-profile/)..."
+  Write-Host "[veycraft] Updating existing checkout (preserving context/, logs/, browser-profile/)..."
+  git -C $HomeDir remote set-url origin $RepoUrl 2>$null
   git -C $HomeDir pull --ff-only origin main
 } elseif (-not (Test-Path $HomeDir)) {
   git clone --depth 1 $RepoUrl $HomeDir
@@ -20,7 +28,7 @@ if (Test-Path (Join-Path $HomeDir ".git")) {
 if (Get-Command node -ErrorAction SilentlyContinue) {
   node (Join-Path $HomeDir "bin\cli.mjs") init --global
 } else {
-  Write-Host "[job-hunter-os] Node.js not found — copying skills directly to global IDE directories..."
+  Write-Host "[veycraft] Node.js not found — copying skills directly to global IDE directories..."
   $targets = @(
     (Join-Path $HOME ".agents\skills"),
     (Join-Path $HOME ".claude\skills"),
@@ -50,5 +58,5 @@ if (Get-Command node -ErrorAction SilentlyContinue) {
   $skipLog = Join-Path $HomeDir "logs\skipped-jobs.json"
   if (-not (Test-Path $skipLog)) { Set-Content -Path $skipLog -Value "[]" -Encoding UTF8 }
 
-  Write-Host "[job-hunter-os] Global skills installed. Start in your AI IDE with /demo (zero personal data) or /quick-tailor (1 CV + 1 JD, no browser login). For full browser-assisted automation later, connect mcp\mcp.template.json and run /setup."
+  Write-Host "[veycraft] Global skills installed. Start in your AI IDE with /demo (zero personal data) or /quick-tailor (1 CV + 1 JD, no browser login). For full browser-assisted automation later, connect mcp\mcp.template.json and run /setup."
 }

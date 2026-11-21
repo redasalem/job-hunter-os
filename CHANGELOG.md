@@ -1,14 +1,26 @@
 # Changelog
 
-All notable changes to **`job-hunter-os`** will be documented in this file.
+All notable changes to **`Veycraft`** *(formerly `job-hunter-os`)* will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.0.0] - 2026-11-21 — Veycraft Rebrand & Profile Intelligence Engine
 
 ### Added
+- **Profile Intelligence Engine (`skills/profile-intelligence-engine.md`, `bin/profile-intelligence.mjs`, `schemas/profile-update-plan.schema.json`, `/profile-update`, PR #7):**
+  - Added a zero-dependency cross-platform profile optimization engine (`linkedin`, `wellfound`, `ats`, `job_boards`, `portfolio`, plus a conservative read/draft-only `generic` fallback) with strict registry-based adapter capability enforcement.
+  - Extended `schemas/resume-data.schema.json` with additive verified profile vault metadata (`fact_provenance`, `verification_status`, `profile_variants`, `platform_profiles`) while preserving full backwards compatibility.
+  - Added consolidated `DRAFT_ONLY` field-level diffs (`add`/`replace` only; zero `remove`), honest post-save verification statuses (`verified`, `partially_applied`, `not_verified`, `blocked`, `needs_review`), CLI `verify <plan.json|vault.json>` integration, natural-language EN/AR routing in `bin/cli.mjs route`, and 10 comprehensive `node:test` suites in `evals/profile-intelligence.test.mjs`.
 - **First-Class OpenAI Codex CLI, Google Gemini CLI & GitHub Copilot / VS Code Sync (`bin/cli.mjs`, `adapters/apps/openai-codex-cli.md`, `adapters/apps/gemini-and-copilot.md`):** Added non-destructive managed instruction injection (`$CODEX_HOME/AGENTS.md`, `~/.gemini/GEMINI.md`, `~/.copilot/copilot-instructions.md`), safe TOML `[mcp_servers.*]` syncing (`.codex/config.toml` / `$CODEX_HOME/config.toml`), Gemini CLI `settings.json`, VS Code `.vscode/mcp.json` (`"servers"`), expanded `--ide` targets (`codex`, `gemini`, `copilot`, `roo`, `kiro`, `junie`, `zed`, `goose`, `aider`), local scaffolding for all repo IDE adapters, and Test 7 in `evals/journeys/run-journeys.test.mjs`.
+
+### Changed
+- **Rebranded Repository & CLI to `Veycraft` (`redasalem/veycraft`):**
+  - Renamed canonical GitHub repository from `redasalem/job-hunter-os` to `redasalem/veycraft` (GitHub preserves automatic HTTP 301 redirects from legacy URLs).
+  - Added `veycraft` as the primary CLI binary and package name (`package.json`) while keeping `job-hunter` and `job-hunter-os` CLI aliases intact for backwards compatibility.
+  - Defaulted new global installations to `~/.veycraft` while automatically detecting and preserving existing `~/.job-hunter-os` directories and seamlessly upgrading legacy `<!-- job-hunter-os:start -->` managed blocks in-place.
+  - Updated provenance records (`PROVENANCE.json`, `NOTICE`, `AUTHORS.md`, `LICENSE`, `.github/CODEOWNERS`), CI checks, `README.md`, `README.ar.md`, `docs/`, `adapters/`, `templates/`, `schemas/`, `scripts/install.{sh,ps1}`, and regenerated `assets/proof-card.svg` for `v2.0.0`.
+  - **Migration note for existing clones:** Run `git remote set-url origin https://github.com/redasalem/veycraft.git`. No local files, skills, workflows, or private `context/`/`logs/` data need to be recreated.
 
 ## [1.5.0] - 2026-11-19 — Universal Guided AI Workflow Engine & Release Hardening
 

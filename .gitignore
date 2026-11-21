@@ -30,7 +30,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# Job Hunter — private local data (examples and synthetic demo only are public)
+# Veycraft — private local data (examples and synthetic demo only are public)
 browser-profile/
 .env
 .env.*

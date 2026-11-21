@@ -1,6 +1,6 @@
 # System Architecture & Execution Lifecycle
 
-`job-hunter-os` combines **48 Markdown-first skills** (loaded progressively by your existing AI IDE or CLI harness) with a **zero-dependency Node.js CLI (`bin/cli.mjs`, `dependencies: {}`, `devDependencies: {}`)**.
+`veycraft` combines **50 Markdown-first skills** (loaded progressively by your existing AI IDE or CLI harness) with a **zero-dependency Node.js CLI (`bin/cli.mjs`, `dependencies: {}`, `devDependencies: {}`)**.
 
 > **Enforcement Transparency:** Deterministic validations (`pre-submit` cap/word checks, `eval`, `proof`, `audit`, `doctor`, `backup`, `unlock`, Git pre-commit PII hook) run locally in `bin/cli.mjs`. Semantic workflow steps (CV fact-checking, prompt-injection quarantine, DOM inspection, and human `APPROVE` gating) are agent workflow requirements in `AGENTS.md` and `skills/*.md`—see [`docs/execution-safety.md`](execution-safety.md).
 

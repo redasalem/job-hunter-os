@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/redasalem/job-hunter-os/schemas/resume-data.schema.json",
+  "$id": "https://github.com/redasalem/veycraft/schemas/resume-data.schema.json",
   "title": "Structured owner-verified resume data",
   "description": "Discrete fields for deterministic form filling (split names, phone country code, location autocomplete, repeater sections). Mirrored by bin/resume-data.mjs. Only owner_verified:true data may be used in forms or rendered.",
   "type": "object",

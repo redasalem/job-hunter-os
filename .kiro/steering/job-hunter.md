@@ -2,7 +2,7 @@
 inclusion: always
 ---
 
-# Job Hunter — AWS Kiro Steering Rules
+# Veycraft — AWS Kiro Steering Rules
 
 Read `AGENTS.md` and `skills/REGISTRY.md` first (Progressive Disclosure: load a specific `skills/*.md` playbook only when its trigger matches the current phase).
 

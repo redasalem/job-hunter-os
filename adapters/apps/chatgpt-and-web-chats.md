@@ -1,10 +1,10 @@
 # ChatGPT Desktop, Custom GPTs, Claude Projects & Gemini Gems Guide
 
-Use this adapter when running **job-hunter-os** inside a hosted desktop or web chat client (`ChatGPT`, `Claude Projects`, `Gemini Gems`) where local Playwright MCP or local filesystem tools may not be attached.
+Use this adapter when running **Veycraft** inside a hosted desktop or web chat client (`ChatGPT`, `Claude Projects`, `Gemini Gems`) where local Playwright MCP or local filesystem tools may not be attached.
 
 ## 1. With MCP / Desktop Local Tools Enabled
 If your desktop app supports MCP (e.g., Claude Desktop via `mcp/claude_desktop_config.example.json` or ChatGPT Desktop connectors):
-1. Point the agent to your local `job-hunter-os/` folder.
+1. Point the agent to your local `veycraft/` folder.
 2. Instruct it: `"Read AGENTS.md and skills/REGISTRY.md first, then run /setup."`
 3. Follow the normal `skills/00-interrogate-and-onboard.md` -> `skills/06-log-and-insights.md` lifecycle.
 

@@ -3,7 +3,7 @@ name: linkedin-growth
 description: Load when the owner asks to review/audit their LinkedIn profile, improve headline/About/experience, sync LinkedIn with their CV, optimize for target roles, or draft posts/<=75-word outreach (/linkedin-growth); defaults to DRAFT_ONLY with APPROVE-gated live edits when authenticated Playwright exists.
 ---
 
-# Job Hunter LinkedIn Growth
+# Veycraft LinkedIn Growth
 
 1. Read `AGENTS.md` and `skills/REGISTRY.md` first.
 2. Follow `.agent/workflows/linkedin-growth.md` and `skills/linkedin-growth.md` (plus `skills/05-outreach-and-interview-prep.md` and `skills/03-tailor-resume-and-verify.md`).

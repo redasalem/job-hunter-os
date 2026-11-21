@@ -1,4 +1,4 @@
-# Job Hunter — GitHub Copilot
+# Veycraft — GitHub Copilot
 
 Read [AGENTS.md](../AGENTS.md) and [skills/REGISTRY.md](../skills/REGISTRY.md) first; only load a full skill body when its trigger matches the current phase of work.
 

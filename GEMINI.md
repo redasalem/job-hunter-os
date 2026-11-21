@@ -1,4 +1,4 @@
-# Job Hunter — Gemini CLI & Antigravity
+# Veycraft — Gemini CLI & Antigravity
 
 Read [AGENTS.md](./AGENTS.md) and [skills/REGISTRY.md](./skills/REGISTRY.md) first; route natural-language requests via the Intent Router in `skills/REGISTRY.md` without forcing `/setup` for standalone tasks, and load only the active skill bodies needed.
 

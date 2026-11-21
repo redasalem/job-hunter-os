@@ -1148,11 +1148,11 @@
       "name": "skill-authoring-standard",
       "version": "1.0.0",
       "category": "core",
-      "description": "Load whenever creating, refactoring, auditing, or contributing a new skill or job-board playbook to job-hunter-os; combines Anthropic official Skill Creator progressive-disclosure rules, agentskills.io auto-discovery conventions, TDD pressure-testing discipline, and job-hunter-os CI schema verification.",
+      "description": "Load whenever creating, refactoring, auditing, or contributing a new skill or job-board playbook to veycraft; combines Anthropic official Skill Creator progressive-disclosure rules, agentskills.io auto-discovery conventions, TDD pressure-testing discipline, and veycraft CI schema verification.",
       "triggers": [
         "author a new skill or platform playbook",
         "edit or audit an existing skill",
-        "prepare skill PR for job-hunter-os"
+        "prepare skill PR for veycraft"
       ],
       "requires_mcp": [
         "none"

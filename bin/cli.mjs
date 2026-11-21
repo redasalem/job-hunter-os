@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Zero-dependency cross-platform installer & DX CLI for job-hunter-os.
+// Zero-dependency cross-platform installer & DX CLI for Veycraft (formerly job-hunter-os).
 // Uses Node.js built-in modules only.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -22,7 +22,7 @@ const info = msg => console.log(paint('36', `[i] ${msg}`));
 const fail = msg => console.error(paint('31', `[✗] ${msg}`));
 
 // ---------------- CLI args ----------------
-const ATTRIBUTION_BANNER = 'Job Hunter OS — Created by Reda Salem (@redasalem) | https://github.com/redasalem/job-hunter-os';
+const ATTRIBUTION_BANNER = 'Veycraft — Created by Reda Salem (@redasalem) | https://github.com/redasalem/veycraft';
 const PINNED_SIGNING_PRINCIPAL = '192090175+redasalem@users.noreply.github.com';
 const PINNED_SIGNING_PUBKEY = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG7t6GfNExgWOy+djcVZlb62BD9DKRrz81Xk++LTZTSo';
 const BOOLEAN_FLAGS = new Set(['--global', '-g', '--help', '-h', '--version', '-v', '--strict', '--yes', '-y', '--no-open', '--baseline', '--force', '--share', '--json', '--journeys']);
@@ -124,16 +124,32 @@ function isSamePath(a, b) {
   return path.relative(normalizePathForCompare(a), normalizePathForCompare(b)) === '';
 }
 
+const PRIMARY_GLOBAL_ROOT = path.join(HOME, '.veycraft');
+const LEGACY_GLOBAL_ROOT = path.join(HOME, '.job-hunter-os');
+
+function resolveGlobalRoot() {
+  if (fs.existsSync(PRIMARY_GLOBAL_ROOT)) return PRIMARY_GLOBAL_ROOT;
+  if (fs.existsSync(LEGACY_GLOBAL_ROOT)) return LEGACY_GLOBAL_ROOT;
+  return PRIMARY_GLOBAL_ROOT;
+}
+
+function hasInstallMarker(dir) {
+  return (
+    fs.existsSync(path.join(dir, '.veycraft-install.json')) ||
+    fs.existsSync(path.join(dir, '.job-hunter-install.json'))
+  );
+}
+
 function isGlobalRoot(root = ROOT) {
-  return isSamePath(root, path.join(HOME, '.job-hunter-os'));
+  return isSamePath(root, PRIMARY_GLOBAL_ROOT) || isSamePath(root, LEGACY_GLOBAL_ROOT);
 }
 
 function resolveRoot() {
-  const globalRoot = path.join(HOME, '.job-hunter-os');
+  const globalRoot = resolveGlobalRoot();
   if (opts.global) return globalRoot;
   if (command === 'init') return process.cwd();
-  if (fs.existsSync(path.join(process.cwd(), '.job-hunter-install.json'))) return process.cwd();
-  if (fs.existsSync(path.join(globalRoot, '.job-hunter-install.json'))) return globalRoot;
+  if (hasInstallMarker(process.cwd())) return process.cwd();
+  if (hasInstallMarker(globalRoot)) return globalRoot;
   return process.cwd();
 }
 
@@ -239,7 +255,7 @@ function copyTree(from, to, { preserve = false, filter = () => true, skipped = n
 
 function ensurePrivateGitignore(root) {
   const ignoreFile = path.join(root, '.gitignore');
-  const marker = '# Job Hunter OS private runtime';
+  const marker = '# Veycraft private runtime';
   const block = [
     '',
     marker,
@@ -265,7 +281,7 @@ function ensurePrivateGitignore(root) {
     return;
   }
   const current = fs.readFileSync(ignoreFile, 'utf8');
-  if (!current.includes(marker) && !current.includes('browser-profile/')) {
+  if (!current.includes(marker) && !current.includes('# Job Hunter OS private runtime') && !current.includes('browser-profile/')) {
     writeAtomic(ignoreFile, current.trimEnd() + '\n' + block);
   }
 }
@@ -282,20 +298,28 @@ function resolveCodexHome() {
 }
 
 function upsertManagedBlock(file, blockBody, { preserve = false } = {}) {
-  const START = '<!-- job-hunter-os:start -->';
-  const END = '<!-- job-hunter-os:end -->';
+  const START = '<!-- veycraft:start -->';
+  const END = '<!-- veycraft:end -->';
+  const LEGACY_START = '<!-- job-hunter-os:start -->';
+  const LEGACY_END = '<!-- job-hunter-os:end -->';
   const wrapped = `${START}\n${blockBody.trimEnd()}\n${END}\n`;
   refuseSymlink(file);
   if (!fs.existsSync(file)) {
     return writeAtomic(file, wrapped, { preserve: false });
   }
   const current = fs.readFileSync(file, 'utf8');
-  const startIdx = current.indexOf(START);
-  const endIdx = current.indexOf(END);
+  let startIdx = current.indexOf(START);
+  let endIdx = current.indexOf(END);
+  let endLen = END.length;
+  if (startIdx === -1 || endIdx <= startIdx) {
+    startIdx = current.indexOf(LEGACY_START);
+    endIdx = current.indexOf(LEGACY_END);
+    endLen = LEGACY_END.length;
+  }
   if (startIdx !== -1 && endIdx > startIdx) {
     if (preserve) return false;
     const before = current.slice(0, startIdx);
-    const after = current.slice(endIdx + END.length).replace(/^\r?\n/, '');
+    const after = current.slice(endIdx + endLen).replace(/^\r?\n/, '');
     const next = `${before}${wrapped}${after}`;
     if (next === current) return false;
     return writeAtomic(file, next, { preserve: false });
@@ -328,7 +352,7 @@ function installIdeSkills(srcRoot, targetRoot, { isGlobal, ide, preserve = false
     // OpenAI Codex CLI global AGENTS.md (~/.codex/AGENTS.md or $CODEX_HOME/AGENTS.md)
     if (want('codex')) {
       const codexPointer = [
-        '# Job Hunter OS (Global Codex Instructions)',
+        '# Veycraft (Global Codex Instructions)',
         '',
         `For job-hunting, CV tailoring, LinkedIn audits, or career tasks, read \`${path.join(targetRoot, 'AGENTS.md')}\` and \`${path.join(targetRoot, 'skills', 'REGISTRY.md')}\` first.`,
         `Resolve \`context/\`, \`logs/\`, \`templates/\`, and \`skills/\` inside \`${targetRoot}\`.`,
@@ -342,7 +366,7 @@ function installIdeSkills(srcRoot, targetRoot, { isGlobal, ide, preserve = false
     if (want('gemini')) {
       written += copyTree(path.join(srcRoot, '.agents', 'skills'), path.join(HOME, '.gemini', 'skills'), { preserve, skipped });
       const geminiPointer = [
-        '# Job Hunter OS (Global Gemini CLI Instructions)',
+        '# Veycraft (Global Gemini CLI Instructions)',
         '',
         `For job-hunting and career workflows, read \`${path.join(targetRoot, 'AGENTS.md')}\` and \`${path.join(targetRoot, 'skills', 'REGISTRY.md')}\` first.`,
         `Resolve \`context/\`, \`logs/\`, \`templates/\`, and \`skills/\` inside \`${targetRoot}\`.`,
@@ -354,7 +378,7 @@ function installIdeSkills(srcRoot, targetRoot, { isGlobal, ide, preserve = false
     // GitHub Copilot CLI global instructions (~/.copilot/copilot-instructions.md)
     if (want('copilot')) {
       const copilotPointer = [
-        '# Job Hunter OS (Global Copilot Instructions)',
+        '# Veycraft (Global Copilot Instructions)',
         '',
         `For job-hunting workflows, read \`${path.join(targetRoot, 'AGENTS.md')}\` and \`${path.join(targetRoot, 'skills', 'REGISTRY.md')}\` first.`,
         `Resolve \`context/\`, \`logs/\`, \`templates/\`, and \`skills/\` inside \`${targetRoot}\`.`,
@@ -377,7 +401,7 @@ function installIdeSkills(srcRoot, targetRoot, { isGlobal, ide, preserve = false
     if (want('cursor')) {
       const ruleText = [
         '---',
-        'description: Job Hunter OS global instructions and progressive disclosure entry',
+        'description: Veycraft global instructions and progressive disclosure entry',
         'alwaysApply: false',
         '---',
         '',
@@ -727,11 +751,12 @@ function installGitPreCommitHook(root) {
     return false;
   }
   const hookFile = path.join(gitDir, 'hooks', 'pre-commit');
-  const marker = '# job-hunter-os pre-commit pii shield';
+  const marker = '# veycraft pre-commit pii shield';
+  const legacyMarker = '# job-hunter-os pre-commit pii shield';
   if (fs.existsSync(hookFile)) {
     try {
       const existing = fs.readFileSync(hookFile, 'utf8');
-      if (!existing.includes(marker)) return true; // preserve custom user hook
+      if (!existing.includes(marker) && !existing.includes(legacyMarker)) return true; // preserve custom user hook
     } catch {
       return false;
     }
@@ -746,13 +771,13 @@ function installGitPreCommitHook(root) {
     '  case "$f" in',
     '    context/*.example|context/DROP_YOUR_FILES_HERE.md) ;;',
     '    context/*|logs/*|browser-profile/*|*.pdf|.env|.env.*|.mcp.json|.cursor/mcp.json|.codex/config.toml|.gemini/settings.json|.vscode/mcp.json)',
-    '      echo "[job-hunter-os PII Shield] BLOCKED commit of private file: $f" >&2',
+    '      echo "[veycraft PII Shield] BLOCKED commit of private file: $f" >&2',
     '      exit 1',
     '      ;;',
     '  esac',
     'done',
     'if git diff --cached -U0 | grep -E "^\\+.*(ntn_[A-Za-z0-9]{12,}|sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})" >/dev/null 2>&1; then',
-    '  echo "[job-hunter-os PII Shield] BLOCKED commit containing an API token signature (ntn_ / sk- / ghp_)." >&2',
+    '  echo "[veycraft PII Shield] BLOCKED commit containing an API token signature (ntn_ / sk- / ghp_)." >&2',
     '  exit 1',
     'fi',
     'exit 0',
@@ -789,13 +814,13 @@ function cmdInit() {
   const isGlobal = opts.global;
   scaffoldFrom(SOURCE, ROOT, { isUpdate: false });
   writeAtomic(
-    path.join(ROOT, '.job-hunter-install.json'),
-    JSON.stringify({ version: 1, scope: isGlobal ? 'global' : 'local', installed_at: new Date().toISOString() }, null, 2) + '\n',
+    path.join(ROOT, '.veycraft-install.json'),
+    JSON.stringify({ version: 2, scope: isGlobal ? 'global' : 'local', installed_at: new Date().toISOString() }, null, 2) + '\n',
     { preserve: true },
   );
   const ideFiles = installIdeSkills(SOURCE, ROOT, { isGlobal, ide: opts.ide, preserve: isGlobal ? !opts.force : false });
   syncMcp({ root: ROOT, isGlobal, src: SOURCE });
-  ok(`Job Hunter OS initialized successfully (${isGlobal ? 'global' : 'local'} at ${ROOT} · ${ideFiles} IDE skill/rule file(s) synced).`);
+  ok(`Veycraft initialized successfully (${isGlobal ? 'global' : 'local'} at ${ROOT} · ${ideFiles} IDE skill/rule file(s) synced).`);
   console.log('');
   console.log('Your first experience:');
   console.log('');
@@ -816,14 +841,14 @@ function cmdInit() {
 // ---------------- update ----------------
 function cmdUpdate() {
   const isGlobal = opts.global || isGlobalRoot(ROOT);
-  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'job-hunter-update-'));
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'veycraft-update-'));
   try {
     let srcRoot = SOURCE;
     const repoDir = path.join(temp, 'repo');
-    info('Fetching latest job-hunter-os playbooks from GitHub...');
+    info('Fetching latest Veycraft playbooks from GitHub...');
     const clone = spawnSync(
       'git',
-      ['clone', '--depth', '1', 'https://github.com/redasalem/job-hunter-os.git', repoDir],
+      ['clone', '--depth', '1', 'https://github.com/redasalem/veycraft.git', repoDir],
       { stdio: 'pipe', timeout: 60000, env: { ...process.env, GIT_TERMINAL_PROMPT: '0' } },
     );
     if (clone.status === 0 && fs.existsSync(path.join(repoDir, 'AGENTS.md'))) {
@@ -860,7 +885,7 @@ function cmdUpdate() {
     }
 
     scaffoldFrom(srcRoot, ROOT, { isUpdate: true });
-    // Also refresh bin/ & scripts/ if target is ~/.job-hunter-os
+    // Also refresh bin/ & scripts/ if target is ~/.veycraft (or legacy ~/.job-hunter-os)
     if (!isSamePath(ROOT, srcRoot)) {
       copyTree(path.join(srcRoot, 'bin'), path.join(ROOT, 'bin'), { preserve: false });
       copyTree(path.join(srcRoot, 'scripts'), path.join(ROOT, 'scripts'), { preserve: false });
@@ -967,14 +992,14 @@ async function verifyProfileLinks(root, isProfileReady) {
           method: 'HEAD',
           redirect: 'follow',
           signal: AbortSignal.timeout(3500),
-          headers: { 'User-Agent': 'job-hunter-os-link-check/1.0' },
+          headers: { 'User-Agent': 'veycraft-link-check/2.0' },
         });
         if (res.status === 405 || res.status === 403) {
           res = await fetch(u, {
             method: 'GET',
             redirect: 'follow',
             signal: AbortSignal.timeout(3500),
-            headers: { 'User-Agent': 'job-hunter-os-link-check/1.0' },
+            headers: { 'User-Agent': 'veycraft-link-check/2.0' },
           });
         }
         if (res.status === 404 || res.status === 410 || res.status >= 500) {
@@ -1014,13 +1039,13 @@ async function cmdDoctor() {
   const isGlobal = opts.global || isGlobalRoot(ROOT);
 
   console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
-  console.log(paint('36', `Job Hunter OS Doctor — ${ROOT}\n`));
+  console.log(paint('36', `Veycraft Doctor — ${ROOT}\n`));
 
   const nodeMajor = Number(process.versions.node.split('.')[0]);
   if (nodeMajor >= 18) ok(`OS & Runtime: ${process.platform} (${os.arch()}) · Node ${process.versions.node}`);
   else { fail(`Node.js 18+ required (found ${process.versions.node})`); criticalFailures++; }
 
-  const installed = fs.existsSync(path.join(ROOT, '.job-hunter-install.json')) || fs.existsSync(path.join(ROOT, 'AGENTS.md'));
+  const installed = hasInstallMarker(ROOT) || fs.existsSync(path.join(ROOT, 'AGENTS.md'));
   if (installed) ok(`Agent Home: ${ROOT} (${isGlobal ? 'global' : 'local'})`);
   else { fail(`Agent Home not initialized at ${ROOT}; run \`init\``); criticalFailures++; }
 
@@ -1054,14 +1079,14 @@ async function cmdDoctor() {
         if (prov?.original_author !== 'Reda Salem') {
           missingOrTampered.push('PROVENANCE.json (original_author mismatch)');
         }
-        if (prov?.canonical_repository !== 'https://github.com/redasalem/job-hunter-os') {
+        if (prov?.canonical_repository !== 'https://github.com/redasalem/veycraft') {
           missingOrTampered.push('PROVENANCE.json (canonical_repository mismatch)');
         }
         if (prov?.verified_noreply_email !== PINNED_SIGNING_PRINCIPAL) {
           missingOrTampered.push('PROVENANCE.json (verified_noreply_email mismatch)');
         }
       } else if (rel === 'NOTICE') {
-        if (!txt.includes('Copyright (c) 2026 Reda Salem (@redasalem)') || !txt.includes('https://github.com/redasalem/job-hunter-os')) {
+        if (!txt.includes('Copyright (c) 2026 Reda Salem (@redasalem)') || !txt.includes('https://github.com/redasalem/veycraft')) {
           missingOrTampered.push('NOTICE (canonical copyright or repository URL missing/tampered)');
         }
       } else if (rel === 'AUTHORS.md') {
@@ -1349,7 +1374,7 @@ function cmdStatus() {
   }
 
   console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
-  console.log(paint('36', `Job Hunter OS Status — ${ROOT}\n`));
+  console.log(paint('36', `Veycraft Status — ${ROOT}\n`));
   ok(`Readiness Gates:        ${gateScore}/${gates.total} ${gateScore === gates.total ? '(READY)' : '(run /setup to complete)'}`);
   info(`Today vs. Daily Cap:    ${todayApplied}/${effectiveCap} applications (${warmupActive ? 'Warm-up Days 1-3 cap: 5/day' : `Standard cap: ${maxPerDay}/day`}, dry_run: ${dryRun ? 'ON' : 'OFF'})`);
   info(`Pipeline Summary:       Applied: ${totalApplied} | Interviewing: ${interviewing} | Assessment: ${assessment} | Offers: ${offers} | Rejected/Ghosted: ${rejected}`);
@@ -1370,7 +1395,7 @@ function readContextOrExample(root, srcRoot, relPath) {
 function cmdBundle() {
   const outFile = path.join(ROOT, 'logs', 'exports', 'web-chat-master-prompt.md');
   const sections = [
-    '# Job Hunter OS — Portable Web-Chat Master Prompt Bundle',
+    '# Veycraft — Portable Web-Chat Master Prompt Bundle',
     '',
     '> Paste or upload this single file into ChatGPT Web, Claude Web, or Gemini Web when running without Playwright MCP (`skills/fallback-no-mcp.md`).',
     '> Then paste any job description to get an honest 0-10 match score, ATS Keyword Heatmap (`skills/21-ats-keyword-heatmap.md`), and a tailored single-column HTML resume.',
@@ -1680,7 +1705,7 @@ function cmdEval() {
       throw new Error(`Journey test suite not found: ${journeyTest}`);
     }
     const { version } = readPackageMeta();
-    console.log(paint('36', `\nJob Hunter OS — Synthetic Task-Journey Test Matrix (v${version})`));
+    console.log(paint('36', `\nVeycraft — Synthetic Task-Journey Test Matrix (v${version})`));
     const testFiles = [journeyTest];
     const profileTest = path.join(evalRoot, 'profile-intelligence.test.mjs');
     if (fs.existsSync(profileTest)) testFiles.push(profileTest);
@@ -1711,7 +1736,7 @@ function cmdEval() {
     : 'Harness Reference Baseline (CI Self-Test — static fixture verification, NOT a live LLM benchmark)';
 
   const { version } = readPackageMeta();
-  console.log(paint('36', `\nJob Hunter OS — Deterministic Skill Evaluation Harness (v${version})`));
+  console.log(paint('36', `\nVeycraft — Deterministic Skill Evaluation Harness (v${version})`));
   info(`Mode: ${evalModeLabel}\n`);
   for (const [id, label, cond] of checks) {
     if (cond) ok(`${id} · ${label}`);
@@ -1765,7 +1790,7 @@ function cmdProof() {
     : 'not run locally';
 
   const svg = [
-    '<svg xmlns="http://www.w3.org/2000/svg" width="840" height="360" viewBox="0 0 840 360" role="img" aria-label="Job Hunter OS Reproducible Proof Card">',
+    '<svg xmlns="http://www.w3.org/2000/svg" width="840" height="360" viewBox="0 0 840 360" role="img" aria-label="Veycraft Reproducible Proof Card">',
     '  <defs>',
     '    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">',
     '      <stop offset="0%" stop-color="#070b14"/>',
@@ -1779,9 +1804,9 @@ function cmdProof() {
     '  </defs>',
     '  <rect width="840" height="360" rx="18" fill="url(#bg)"/>',
     '  <rect x="1" y="1" width="838" height="358" rx="17" fill="none" stroke="#334155" stroke-width="1.5"/>',
-    '  <rect x="32" y="28" width="178" height="28" rx="14" fill="#064e3b" fill-opacity="0.55" stroke="#34d399" stroke-opacity="0.5"/>',
-    `  <text x="121" y="47" text-anchor="middle" fill="#6ee7b7" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="12" font-weight="700">JOB HUNTER OS · v${escapeXml(version)}</text>`,
-    '  <text x="808" y="47" text-anchor="end" fill="#94a3b8" font-family="Consolas,ui-monospace,monospace" font-size="12">redasalem/job-hunter-os · MIT</text>',
+    '  <rect x="32" y="28" width="166" height="28" rx="14" fill="#064e3b" fill-opacity="0.55" stroke="#34d399" stroke-opacity="0.5"/>',
+    `  <text x="115" y="47" text-anchor="middle" fill="#6ee7b7" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="12" font-weight="700">VEYCRAFT · v${escapeXml(version)}</text>`,
+    '  <text x="808" y="47" text-anchor="end" fill="#94a3b8" font-family="Consolas,ui-monospace,monospace" font-size="12">redasalem/veycraft · MIT</text>',
     '  <text x="32" y="92" fill="#f8fafc" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="26" font-weight="800">Reproducible Safety &amp; Architecture Proof Card</text>',
     '  <rect x="32" y="106" width="160" height="3" rx="1.5" fill="url(#accent)"/>',
     '  <g font-family="Segoe UI,Inter,Arial,sans-serif">',
@@ -1804,13 +1829,13 @@ function cmdProof() {
     '  </g>',
     '  <rect x="32" y="264" width="776" height="44" rx="10" fill="#064e3b" fill-opacity="0.35" stroke="#34d399" stroke-opacity="0.35"/>',
     '  <text x="48" y="291" fill="#a7f3d0" font-family="Consolas,ui-monospace,monospace" font-size="12.5">Explicit Job-Specific APPROVE Required · No Score-Based Auto-Submit · Local-First</text>',
-    '  <text x="32" y="336" fill="#94a3b8" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="11.5">Scope: Deterministic fixture validation (not an independent live-model accuracy benchmark). Reproduce: npx github:redasalem/job-hunter-os proof</text>',
+    '  <text x="32" y="336" fill="#94a3b8" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="11.5">Scope: Deterministic fixture validation (not an independent live-model accuracy benchmark). Reproduce: npx github:redasalem/veycraft proof</text>',
     '</svg>',
     '',
   ].join('\n');
 
   const md = [
-    `# Job Hunter OS — Reproducible Proof Card (\`v${version}\`)`,
+    `# Veycraft — Reproducible Proof Card (\`v${version}\`)`,
     '',
     '> **Honest Scope:** Deterministic fixture validation generated locally from repository artifacts and `eval --baseline` — **not** an independent live-model accuracy benchmark. Zero telemetry, zero external servers, zero personal CV data.',
     '',
@@ -1825,7 +1850,7 @@ function cmdProof() {
     '',
     '### Reproduce Locally',
     '```bash',
-    'npx github:redasalem/job-hunter-os proof',
+    'npx github:redasalem/veycraft proof',
     '```',
     '',
   ].join('\n');
@@ -1844,7 +1869,7 @@ function cmdProof() {
 function cmdPreSubmit() {
   let failures = 0;
   console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
-  console.log(paint('36', `Job Hunter OS Pre-Submit Deterministic Gate — ${ROOT}\n`));
+  console.log(paint('36', `Veycraft Pre-Submit Deterministic Gate — ${ROOT}\n`));
 
   // 1. Daily cap & Days 1-3 warm-up cap check against logs/applications-log.json
   const guardFile = [path.join(ROOT, 'config', 'guardrails.yaml'), path.join(SOURCE, 'config', 'guardrails.yaml')].find(f => fs.existsSync(f));
@@ -2079,7 +2104,7 @@ function readCvInputText(resolved) {
 function cmdAudit() {
   const targetArg = positional[1];
   if (!targetArg) {
-    throw new Error('Usage: job-hunter audit <path/to/resume.md|txt|docx|html|doc> [--share]');
+    throw new Error('Usage: veycraft audit <path/to/resume.md|txt|docx|html|doc> [--share]');
   }
   const resolved = path.resolve(process.cwd(), targetArg);
   if (!fs.existsSync(resolved) || !fs.statSync(resolved).isFile()) {
@@ -2163,7 +2188,7 @@ function cmdAudit() {
     : (hasPlaceholder ? 'placeholders' : 'clean');
 
   console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
-  console.log(paint('36', 'Job Hunter OS — Instant Local CV Hygiene Audit (Zero-Dependency, Offline)\n'));
+  console.log(paint('36', 'Veycraft — Instant Local CV Hygiene Audit (Zero-Dependency, Offline)\n'));
   console.log('+--------------------------------------------------------------+');
   console.log(`| CV Hygiene Score:      ${String(`${totalScore}/100 (heuristic)`).padEnd(38)}|`);
   console.log(`| Human Tone (0 slop):   ${String(`${toneScore}/25 (${clichésFound.length} clichés, ${emDashCount} em-dashes)`).padEnd(38)}|`);
@@ -2186,7 +2211,7 @@ function cmdAudit() {
       : (hasPlaceholder || badUrls > 0 ? 'Warnings found' : 'Clean');
 
     const cardSvg = [
-      '<svg xmlns="http://www.w3.org/2000/svg" width="840" height="360" viewBox="0 0 840 360" role="img" aria-label="Job Hunter OS Local CV Hygiene Scorecard">',
+      '<svg xmlns="http://www.w3.org/2000/svg" width="840" height="360" viewBox="0 0 840 360" role="img" aria-label="Veycraft Local CV Hygiene Scorecard">',
       '  <defs>',
       '    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">',
       '      <stop offset="0%" stop-color="#070b14"/>',
@@ -2202,7 +2227,7 @@ function cmdAudit() {
       '  <rect x="1" y="1" width="838" height="358" rx="17" fill="none" stroke="#334155" stroke-width="1.5"/>',
       '  <rect x="32" y="28" width="214" height="28" rx="14" fill="#064e3b" fill-opacity="0.55" stroke="#34d399" stroke-opacity="0.5"/>',
       `  <text x="139" y="47" text-anchor="middle" fill="#6ee7b7" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="12" font-weight="700">CV HYGIENE AUDIT · v${escapeXml(version)}</text>`,
-      '  <text x="808" y="47" text-anchor="end" fill="#94a3b8" font-family="Consolas,ui-monospace,monospace" font-size="12">github.com/redasalem/job-hunter-os</text>',
+      '  <text x="808" y="47" text-anchor="end" fill="#94a3b8" font-family="Consolas,ui-monospace,monospace" font-size="12">github.com/redasalem/veycraft</text>',
       `  <text x="32" y="92" fill="#f8fafc" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="26" font-weight="800">Local CV Hygiene Scorecard · <tspan fill="${scoreColor}">${totalScore}/100</tspan></text>`,
       '  <rect x="32" y="106" width="160" height="3" rx="1.5" fill="url(#accent)"/>',
       '  <g font-family="Segoe UI,Inter,Arial,sans-serif">',
@@ -2225,13 +2250,13 @@ function cmdAudit() {
       '  </g>',
       '  <rect x="32" y="264" width="776" height="44" rx="10" fill="#064e3b" fill-opacity="0.35" stroke="#34d399" stroke-opacity="0.35"/>',
       '  <text x="48" y="291" fill="#a7f3d0" font-family="Consolas,ui-monospace,monospace" font-size="12">Raw CV text, names, emails, phones &amp; URLs excluded · Saved locally only (never uploaded)</text>',
-      '  <text x="32" y="336" fill="#94a3b8" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="11">Heuristic CV hygiene measure (not an ATS outcome prediction or claim verification). Run: npx github:redasalem/job-hunter-os audit ./resume.md --share</text>',
+      '  <text x="32" y="336" fill="#94a3b8" font-family="Segoe UI,Inter,Arial,sans-serif" font-size="11">Heuristic CV hygiene measure (not an ATS outcome prediction or claim verification). Run: npx github:redasalem/veycraft audit ./resume.md --share</text>',
       '</svg>',
       '',
     ].join('\n');
 
     const cardMd = [
-      `# Job Hunter OS — Local CV Hygiene Scorecard (\`v${version}\`)`,
+      `# Veycraft — Local CV Hygiene Scorecard (\`v${version}\`)`,
       '',
       '> **Privacy & Scope Notice:** Raw CV text, filenames, personal names, emails, phone numbers, and URLs are **excluded** from this artifact. Saved locally only (zero uploads). This is a **heuristic CV hygiene measure**, not an ATS acceptance prediction or verification that every claim is factually true.',
       '',
@@ -2242,11 +2267,11 @@ function cmdAudit() {
       `| **Detected Numeric Metrics** | ${totalMetrics} detected (${quantifiedBullets}/${bullets.length} quantified bullets) |`,
       `| **Page-Fit Category** | ${lengthCategory} (${lengthScore}/25 · ${wordCount} words / ${lineCount} lines) |`,
       `| **Data & Link Hygiene** | ${hygieneScore}/20 (${hygieneLabel}) |`,
-      `| **Tool Version** | \`job-hunter-os v${version}\` (https://github.com/redasalem/job-hunter-os) |`,
+      `| **Tool Version** | \`veycraft v${version}\` (https://github.com/redasalem/veycraft) |`,
       '',
       '### Reproduce Locally',
       '```bash',
-      'npx github:redasalem/job-hunter-os audit ./resume.md --share',
+      'npx github:redasalem/veycraft audit ./resume.md --share',
       '```',
       '',
     ].join('\n');
@@ -2258,13 +2283,13 @@ function cmdAudit() {
 
     console.log('\n--- Shareable Scorecard (--share · Raw CV Text Excluded) ---');
     console.log('```text');
-    console.log(`job-hunter-os v${version} · Local CV Hygiene Audit (Zero-Dependency)`);
+    console.log(`veycraft v${version} · Local CV Hygiene Audit (Zero-Dependency)`);
     console.log(`Hygiene Score:            ${totalScore}/100 (heuristic — not an ATS acceptance prediction)`);
     console.log(`Human Tone:               ${toneScore}/25 (${clichésFound.length} clichés, ${emDashCount} em-dashes)`);
     console.log(`Detected Numeric Metrics: ${totalMetrics} detected (${quantifiedBullets}/${bullets.length} bullets)`);
     console.log(`Page-Fit Category:        ${lengthStatus}`);
     console.log(`Data & Link Hygiene:      ${hygieneScore}/20 (${hygieneLabel}; raw CV text excluded)`);
-    console.log('Reproduce locally:        npx github:redasalem/job-hunter-os audit ./resume.md --share');
+    console.log('Reproduce locally:        npx github:redasalem/veycraft audit ./resume.md --share');
     console.log('```');
     ok('Saved privacy-safe local scorecard artifacts (raw CV text & personal details excluded):');
     info(`  SVG -> ${svgOut}`);
@@ -2464,7 +2489,7 @@ const ROUTE_RULES = [
 function matchNaturalLanguageRoute(query) {
   const q = String(query || '').trim();
   if (!q) {
-    throw new Error('Usage: job-hunter route "<natural-language request>" [--json]');
+    throw new Error('Usage: veycraft route "<natural-language request>" [--json]');
   }
   const hit = ROUTE_RULES.find(r => r.match(q)) || {
     intent: 'general-career-assistant',
@@ -2612,7 +2637,7 @@ function loadFactsConfig(factsPath) {
 function cmdVerify() {
   const targetArg = positional[1];
   if (!targetArg) {
-    throw new Error('Usage: job-hunter verify <path/to/dir-or-file> [--facts <ground-truth.json|cv.md>]');
+    throw new Error('Usage: veycraft verify <path/to/dir-or-file> [--facts <ground-truth.json|cv.md>]');
   }
   const resolved = path.resolve(process.cwd(), targetArg);
   if (!fs.existsSync(resolved)) {
@@ -2632,7 +2657,7 @@ function cmdVerify() {
   }
 
   console.log(paint('36', `\n${ATTRIBUTION_BANNER}`));
-  console.log(paint('36', `Job Hunter OS Deliverable Verification — ${resolved}\n`));
+  console.log(paint('36', `Veycraft Deliverable Verification — ${resolved}\n`));
 
   let errorCount = 0;
   for (const f of files) {
@@ -2665,27 +2690,28 @@ function cmdVersion() {
 function cmdHelp() {
   const { version } = readPackageMeta();
   console.log(`${ATTRIBUTION_BANNER}
-job-hunter-os v${version} — Truthful CV Tailoring & Local-First AI Career Framework (Zero-Dependency CLI)
+veycraft v${version} — Agent-Native Career Operations & Profile Intelligence Engine (Zero-Dependency CLI)
+Legacy CLI aliases \`job-hunter\` and \`job-hunter-os\` remain supported for backwards compatibility.
 
 Usage:
-  job-hunter init [--global | -g] [--force] [--ide <name>]   Scaffold agent home & sync IDE skills/MCP
-  job-hunter audit <cv.md|txt|docx|html|doc> [--share]         Instant offline CV hygiene audit + scorecard
-  job-hunter route "<request>" [--json]                        Route natural-language task to minimal skills
-  job-hunter verify <dir|file> [--facts <json|md>]             Post-write deliverable, format & fact check
-  job-hunter proof [--global | -g]                 Generate reproducible proof-card.svg & proof-card.md in logs/exports/
-  job-hunter eval [--baseline | --file <json> | --journeys]    Grade Baseline, external JSON, or synthetic journeys
-  job-hunter pre-submit [--draft <f> | --text <t>] Deterministically enforce <=75-word cap & daily warm-up limit
-  job-hunter doctor [--global | -g] [--strict]     Run installation, readiness, live URL & strict provenance checks
-  job-hunter status [--global | -g]                Print readiness gates, daily warm-up cap & pipeline funnel summary
-  job-hunter bundle [--global | -g]                Export single-file web-chat prompt to logs/exports/web-chat-master-prompt.md
-  job-hunter dashboard [--global | -g] [--no-open] Generate & open local Kanban dashboard at logs/exports/dashboard.html
-  job-hunter unlock [--global | -g]                Safely remove stale Chromium lock files (refuses active PIDs)
-  job-hunter backup [--global | -g]                Verify JSON log integrity & snapshot context/ + logs/ to logs/backups/
-  job-hunter login [--global | -g]                 Open Chrome/Chromium with persistent browser-profile/
-  job-hunter sync-mcp [--global | -g]              Safely merge Playwright & optional Notion MCP configs
-  job-hunter update [--global | -g] [--ide <name>] Verify SSH signature & refresh playbooks (preserves context/ & logs/)
-  job-hunter --version | -v                        Print version & canonical creator attribution
-  job-hunter --help                                Show this help message`);
+  veycraft init [--global | -g] [--force] [--ide <name>]   Scaffold agent home & sync IDE skills/MCP
+  veycraft audit <cv.md|txt|docx|html|doc> [--share]       Instant offline CV hygiene audit + scorecard
+  veycraft route "<request>" [--json]                      Route natural-language task to minimal skills
+  veycraft verify <dir|file> [--facts <json|md>]           Post-write deliverable, format & fact check
+  veycraft proof [--global | -g]                 Generate reproducible proof-card.svg & proof-card.md in logs/exports/
+  veycraft eval [--baseline | --file <json> | --journeys]  Grade Baseline, external JSON, or synthetic journeys
+  veycraft pre-submit [--draft <f> | --text <t>] Deterministically enforce <=75-word cap & daily warm-up limit
+  veycraft doctor [--global | -g] [--strict]     Run installation, readiness, live URL & strict provenance checks
+  veycraft status [--global | -g]                Print readiness gates, daily warm-up cap & pipeline funnel summary
+  veycraft bundle [--global | -g]                Export single-file web-chat prompt to logs/exports/web-chat-master-prompt.md
+  veycraft dashboard [--global | -g] [--no-open] Generate & open local Kanban dashboard at logs/exports/dashboard.html
+  veycraft unlock [--global | -g]                Safely remove stale Chromium lock files (refuses active PIDs)
+  veycraft backup [--global | -g]                Verify JSON log integrity & snapshot context/ + logs/ to logs/backups/
+  veycraft login [--global | -g]                 Open Chrome/Chromium with persistent browser-profile/
+  veycraft sync-mcp [--global | -g]              Safely merge Playwright & optional Notion MCP configs
+  veycraft update [--global | -g] [--ide <name>] Verify SSH signature & refresh playbooks (preserves context/ & logs/)
+  veycraft --version | -v                        Print version & canonical creator attribution
+  veycraft --help                                Show this help message`);
 }
 
 // ---------------- dispatch ----------------

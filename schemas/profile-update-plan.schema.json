@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/redasalem/job-hunter-os/schemas/profile-update-plan.schema.json",
-  "title": "Job Hunter OS Profile Update Plan",
+  "$id": "https://github.com/redasalem/veycraft/schemas/profile-update-plan.schema.json",
+  "title": "Veycraft Profile Update Plan",
   "description": "A reviewable, evidence-grounded plan for profile edits across career platforms. Removal actions are intentionally not supported.",
   "type": "object",
   "additionalProperties": false,

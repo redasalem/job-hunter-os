@@ -1,4 +1,4 @@
-# Autonomous Job Hunter — Canonical Agent Brain
+# Veycraft — Canonical Agent Brain
 
 > Single source of truth for **Antigravity**, **Cursor**, **Claude Code**, **OpenAI Codex CLI**, **Devin Desktop / Windsurf**, **OpenCode**, **Kilo Code**, **Cline / Roo**, **JetBrains Junie**, **AWS Kiro**, **Trae**, **Zed**, **Goose**, **Aider**, **OpenHands**, **Warp**, and **GitHub Copilot**.
 > This repository is a **Markdown-first AI career operations framework with a zero-dependency Node.js CLI (`bin/cli.mjs`, `dependencies: {}`)**, following the `agentskills.io` (`.agents/skills/*/SKILL.md`) and `skills/REGISTRY.md` conventions. You (the AI model) execute the Markdown playbooks directly using IDE file tools, optional **Playwright MCP**, and optional **Notion MCP**. Fast-start workflows (`/demo` and `/quick-tailor`) require no browser login.

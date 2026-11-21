@@ -1,4 +1,4 @@
-# Job Hunter — JetBrains Junie Guidelines
+# Veycraft — JetBrains Junie Guidelines
 
 Read `AGENTS.md` and `skills/REGISTRY.md` first at the start of every task (Progressive Disclosure: load only the specific `skills/*.md` file whose trigger matches the active step).
 

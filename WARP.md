@@ -1,4 +1,4 @@
-# Job Hunter — Warp Terminal Agent Rules
+# Veycraft — Warp Terminal Agent Rules
 
 Read `AGENTS.md` and `skills/REGISTRY.md` at session start. Follow Progressive Disclosure and route natural-language requests via `skills/REGISTRY.md` (without forcing `/setup` for standalone CV/LinkedIn/prep/report tasks): open only the specific `skills/*.md` playbook whose trigger matches the active step.
 

@@ -1,6 +1,6 @@
 # Local Execution Safety & Control Boundaries
 
-Job Hunter OS combines **deterministic CLI checks** with **agent workflow requirements**. Being transparent about which layer enforces each control is essential: Markdown instructions guide the AI model inside your IDE and are **not** equivalent to an OS sandbox or independent runtime enforcement boundary.
+Veycraft combines **deterministic CLI checks** with **agent workflow requirements**. Being transparent about which layer enforces each control is essential: Markdown instructions guide the AI model inside your IDE and are **not** equivalent to an OS sandbox or independent runtime enforcement boundary.
 
 ---
 
@@ -8,7 +8,7 @@ Job Hunter OS combines **deterministic CLI checks** with **agent workflow requir
 
 Executed locally by zero-dependency Node.js code (`dependencies: {}`, `devDependencies: {}`) with exit-code enforcement:
 
-1. **Pre-Submit Cap & Word-Count Gate (`job-hunter pre-submit`):** Deterministically counts today's `applied` + unresolved `submission_uncertain` records in `logs/applications-log.json` against `max_applications_per_day` and the Days 1–3 warm-up cap (`5/day`), verifies outreach drafts stay `<= 75` words, and prints `config/invariants.txt`.
+1. **Pre-Submit Cap & Word-Count Gate (`veycraft pre-submit`):** Deterministically counts today's `applied` + unresolved `submission_uncertain` records in `logs/applications-log.json` against `max_applications_per_day` and the Days 1–3 warm-up cap (`5/day`), verifies outreach drafts stay `<= 75` words, and prints `config/invariants.txt`.
 2. **Git Pre-Commit PII & Secret Shield (`.git/hooks/pre-commit`):** Installed during `init` and `doctor`; blocks commits staging private `context/*` (except `*.example` and `DROP_YOUR_FILES_HERE.md`), `logs/*`, `browser-profile/*`, `*.pdf`, `.env*`, `.mcp.json`, or API token patterns (`ntn_`, `sk-`, `ghp_`, `github_pat_`).
 3. **Provenance & Update Signature Verification (`doctor`, `update`):** Validates canonical fields in `NOTICE`, `AUTHORS.md`, and `PROVENANCE.json`, and verifies upstream commits via `git verify-commit HEAD` against the pinned `@redasalem` Ed25519 key before `update` overwrites local playbooks.
 4. **JSON Integrity, Lock Safety & SSRF Guards (`backup`, `unlock`, `doctor`, `audit`, `dashboard`):** Validates log JSON before backups, refuses to delete live Chromium PID lockfiles, blocks loopback/private-IP URLs during link audits, rejects binary/PDF input in `audit`, and Unicode-escapes JSON embedded in `dashboard.html` against stored XSS.

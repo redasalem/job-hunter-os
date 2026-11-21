@@ -10,6 +10,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CLI = [
   process.env.JHO_CLI_PATH,
   path.join(ROOT, 'bin', 'cli.mjs'),
+  path.join(os.homedir(), '.veycraft', 'bin', 'cli.mjs'),
   path.join(os.homedir(), '.job-hunter-os', 'bin', 'cli.mjs'),
 ].find(p => p && fs.existsSync(p));
 assert.ok(CLI, 'Could not locate bin/cli.mjs');

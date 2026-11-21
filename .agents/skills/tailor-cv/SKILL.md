@@ -3,7 +3,7 @@ name: tailor-cv
 description: Load when the owner wants to tailor an ATS resume and cover letter for a specific job URL or pasted JD (/tailor-cv) with zero hallucinated metrics or AI-slop clichés (never submits).
 ---
 
-# Job Hunter Tailor CV
+# Veycraft Tailor CV
 
 1. Read `AGENTS.md` and `skills/REGISTRY.md` first.
 2. Follow `.agent/workflows/tailor-cv.md`: inspect the supplied job URL via Playwright MCP if connected, or ask the owner to paste the JD text if MCP is unavailable. If `context/profile.md` / `context/cv.md` are not yet set up, ask for the CV directly in chat (`skills/01-resume-ingestion.md`) instead of blocking.

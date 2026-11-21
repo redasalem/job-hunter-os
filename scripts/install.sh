@@ -1,21 +1,27 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_URL="https://github.com/redasalem/job-hunter-os.git"
-HOME_DIR="${HOME}/.job-hunter-os"
+REPO_URL="https://github.com/redasalem/veycraft.git"
+if [ -d "${HOME}/.veycraft" ] || [ ! -d "${HOME}/.job-hunter-os" ]; then
+  HOME_DIR="${HOME}/.veycraft"
+else
+  HOME_DIR="${HOME}/.job-hunter-os"
+  echo "[veycraft] Detected existing legacy checkout at ${HOME_DIR}; preserving it in place."
+fi
 
-echo "[job-hunter-os] Installing to ${HOME_DIR}..."
+echo "[veycraft] Installing to ${HOME_DIR}..."
 
 if ! command -v git >/dev/null 2>&1; then
-  echo "[job-hunter-os] Error: git is required." >&2
+  echo "[veycraft] Error: git is required." >&2
   exit 1
 fi
 
 if [ -d "${HOME_DIR}/.git" ]; then
-  echo "[job-hunter-os] Updating existing checkout in ${HOME_DIR} (preserving context/, logs/, browser-profile/)..."
-  git -C "${HOME_DIR}" pull --ff-only origin main || echo "[job-hunter-os] Warning: could not pull; keeping existing checkout."
+  echo "[veycraft] Updating existing checkout in ${HOME_DIR} (preserving context/, logs/, browser-profile/)..."
+  git -C "${HOME_DIR}" remote set-url origin "${REPO_URL}" 2>/dev/null || true
+  git -C "${HOME_DIR}" pull --ff-only origin main || echo "[veycraft] Warning: could not pull; keeping existing checkout."
 elif [ -e "${HOME_DIR}" ]; then
-  echo "[job-hunter-os] Using existing directory ${HOME_DIR}."
+  echo "[veycraft] Using existing directory ${HOME_DIR}."
 else
   git clone --depth 1 "${REPO_URL}" "${HOME_DIR}"
 fi
@@ -23,7 +29,7 @@ fi
 if command -v node >/dev/null 2>&1; then
   node "${HOME_DIR}/bin/cli.mjs" init --global
 else
-  echo "[job-hunter-os] Node.js not found — copying skills directly to global IDE directories..."
+  echo "[veycraft] Node.js not found — copying skills directly to global IDE directories..."
   mkdir -p "${HOME}/.agents/skills" "${HOME}/.claude/skills" "${HOME}/.claude/commands" \
            "${HOME}/.gemini/antigravity/global_workflows" "${HOME}/.antigravity/skills" \
            "${HOME_DIR}/logs/runs" "${HOME_DIR}/logs/resumes" "${HOME_DIR}/logs/screenshots" \
@@ -42,6 +48,6 @@ else
   [ -e "${HOME_DIR}/logs/applications-log.json" ] || printf '[]\n' > "${HOME_DIR}/logs/applications-log.json"
   [ -e "${HOME_DIR}/logs/skipped-jobs.json" ] || printf '[]\n' > "${HOME_DIR}/logs/skipped-jobs.json"
 
-  echo "[job-hunter-os] Global skills installed to ~/.agents/skills, ~/.claude/skills, and ~/.gemini/antigravity/global_workflows."
-  echo "[job-hunter-os] Start in your AI IDE with /demo (zero personal data) or /quick-tailor (1 CV + 1 JD, no browser login). For full multi-platform automation later, connect mcp/mcp.template.json and run /setup."
+  echo "[veycraft] Global skills installed to ~/.agents/skills, ~/.claude/skills, and ~/.gemini/antigravity/global_workflows."
+  echo "[veycraft] Start in your AI IDE with /demo (zero personal data) or /quick-tailor (1 CV + 1 JD, no browser login). For full multi-platform automation later, connect mcp/mcp.template.json and run /setup."
 fi

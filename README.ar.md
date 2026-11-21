@@ -1,16 +1,18 @@
 <div dir="rtl" align="right">
 
-# Job Hunter OS
+# Veycraft
 
-### مساعد مهني وتفصيل سيرة ذاتية موثّق بالحقائق لوكيل الذكاء الاصطناعي الذي تستخدمه بالفعل.
+### عمليات مهنية ومحرك ذكاء البروفايل وتفصيل سيرة ذاتية موثّق بالحقائق لوكيل الذكاء الاصطناعي الذي تستخدمه بالفعل.
 
-أعطِ وكيل البرمجة الذكي الذي تستخدمه حاليًا (`OpenAI Codex CLI`، `Claude Code`، `Cursor`، `Antigravity`، `Gemini CLI`، `GitHub Copilot`، `Windsurf`، `Cline`، `OpenCode`) سيرة ذاتية واحدة ووصف وظيفة واحدًا — أو اطلب ما تريد بلغة طبيعية بالعربية أو الإنجليزية. احصل على سيرة ذاتية مُفصّلة وموثّقة بالحقائق بصيغ `HTML / TXT / .doc متوافق مع Word`، وخريطة أدلة شفافة، ومقارنة كلمات `ATS`، وقائمة صريحة بالمهارات الناقصة (`True Gaps`).
+*(سابقًا `job-hunter-os` — تحويلات GitHub التلقائية وأسماء أوامر CLI القديمة `job-hunter` و`job-hunter-os` ما زالت مدعومة بالكامل.)*
+
+أعطِ وكيل البرمجة الذكي الذي تستخدمه حاليًا (`OpenAI Codex CLI`، `Claude Code`، `Cursor`، `Antigravity`، `Gemini CLI`، `GitHub Copilot`، `Windsurf`، `Cline`، `OpenCode`) سيرة ذاتية واحدة ووصف وظيفة واحدًا — أو اطلب ما تريد بلغة طبيعية بالعربية أو الإنجليزية. احصل على سيرة ذاتية مُفصّلة وموثّقة بالحقائق بصيغ `HTML / TXT / .doc متوافق مع Word`، وخريطة أدلة شفافة، ومقارنة كلمات `ATS`، وخطة تحديث بروفايل محققة بالمخطط، وقائمة صريحة بالمهارات الناقصة (`True Gaps`).
 
 بدون خبرات مختلقة. بدون إرسال أعمى. بدون تبعيات `npm install`. بدون مفاتيح `API` خارجية. أنت دائمًا صاحب القرار.
 
 **50 مهارة Markdown** · **0 تبعيات npm أساسية** · **محلي بالكامل (`Local-First`)** · **بتحكم بشري كامل**
 
-**[معاينة تفاعلية ↗](https://redasalem.github.io/job-hunter-os/)** · **[طرق البداية السريعة](#أسرع-طرق-البداية-بدون-تعقيد-إعداد-مسبق)** · **[التثبيت وربط أدوات AI](#التثبيت-وربط-أدوات-الذكاء-الاصطناعي)** · **[مرجع أوامر CLI](#مرجع-أوامر-cli-binclimjs)** · **[English](README.md)**
+**[معاينة تفاعلية ↗](https://redasalem.github.io/veycraft/)** · **[طرق البداية السريعة](#أسرع-طرق-البداية-بدون-تعقيد-إعداد-مسبق)** · **[التثبيت وربط أدوات AI](#التثبيت-وربط-أدوات-الذكاء-الاصطناعي)** · **[مرجع أوامر CLI](#مرجع-أوامر-cli-binclimjs)** · **[English](README.md)**
 
 [![Zero Core Dependencies](https://img.shields.io/badge/Core_CLI-0_NPM_Dependencies-2ea44f)](package.json)
 [![50 Markdown Skills](https://img.shields.io/badge/Skills-50_Markdown_Skills-167d60)](skills/REGISTRY.md)
@@ -20,7 +22,7 @@
 
 ```bash
 # فحص محلي فوري لأي سيرة ذاتية (.md, .txt, .docx, .html, .doc) بدون أي إعداد مسبق
-npx github:redasalem/job-hunter-os audit ./resume.docx --share
+npx github:redasalem/veycraft audit ./resume.docx --share
 ```
 
 </div>
@@ -31,7 +33,7 @@ npx github:redasalem/job-hunter-os audit ./resume.docx --share
 
 جميع الأسماء والشركات والأرقام أدناه هي **بيانات عرض اصطناعية** من [`evals/fixtures/`](evals/fixtures/candidate-profile.md) لتوضيح شكل المخرجات الفعلية:
 
-![معاينة مخرجات تفصيل السيرة الذاتية الموثّق في Job Hunter OS (بيانات عرض اصطناعية)](assets/demo-preview.png)
+![معاينة مخرجات تفصيل السيرة الذاتية الموثّق في Veycraft (بيانات عرض اصطناعية)](assets/demo-preview.png)
 
 | المُدخلات منك | المخرجات الموثّقة التي تستلمها |
 |---|---|
@@ -67,7 +69,7 @@ npx github:redasalem/job-hunter-os audit ./resume.docx --share
 لا تحتاج إلى تسجيل دخول متصفح أو تشغيل `/setup` لتنفيذ المهام المستقلة:
 
 ### 1. اطلب باللغة الطبيعية مباشرة في محرّرك الذكي
-يقوم موجّه المهام الشامل (`skills/REGISTRY.md` و`job-hunter route`) باختيار أقل مجموعة مهارات مناسبة تلقائيًا:
+يقوم موجّه المهام الشامل (`skills/REGISTRY.md` و`veycraft route`) باختيار أقل مجموعة مهارات مناسبة تلقائيًا:
 - *"راجع ملف السيرة الذاتية `./my-cv.docx` واذكر الفجوات مقارنة بهذه الوظيفة."*
 - *"عدّل ملخص الخبرة فقط بناءً على مشاريعي المؤكدة دون تغيير الملف الأصلي."*
 - *"أنشئ لي سيرة ذاتية جديدة خطوة بخطوة."*
@@ -91,21 +93,21 @@ npx github:redasalem/job-hunter-os audit ./resume.docx --share
 **المتطلبات:** `Node.js >= 18` على **`macOS` أو `Linux` أو `Windows`**، مع أي محرّر أو CLI ذكاء اصطناعي تستخدمه بالفعل (بدون `npm install`).
 
 ### أ — التثبيت العالمي التلقائي (مُوصى به)
-يهيئ `~/.job-hunter-os` ويربط المهارات وإعدادات MCP بأمان **دون استبدال قواعدك الشخصية أو إعدادات TOML/JSON المخصصة**:
+يهيئ `~/.veycraft` (ويكتشف تلقائيًا أي مجلد `~/.job-hunter-os` سابق ويحفظه دون فقدان بيانات) ويربط المهارات وإعدادات MCP بأمان **دون استبدال قواعدك الشخصية أو إعدادات TOML/JSON المخصصة**:
 
 <div dir="ltr" align="left">
 
 ```bash
 # ربط وتهيئة جميع محرّرات وأدوات الذكاء الاصطناعي المدعومة تلقائيًا
-npx github:redasalem/job-hunter-os init --global
+npx github:redasalem/veycraft init --global
 
 # أو استهداف أداة محددة فقط:
-npx github:redasalem/job-hunter-os init --global --ide codex       # ~/.codex/AGENTS.md + config.toml + ~/.agents/skills
-npx github:redasalem/job-hunter-os init --global --ide gemini      # ~/.gemini/GEMINI.md + settings.json + ~/.gemini/skills
-npx github:redasalem/job-hunter-os init --global --ide claude      # ~/.claude/commands + ~/.claude/skills + ~/.claude.json
-npx github:redasalem/job-hunter-os init --global --ide cursor      # ~/.cursor/rules/job-hunter.mdc + ~/.cursor/mcp.json
-npx github:redasalem/job-hunter-os init --global --ide copilot     # ~/.copilot/copilot-instructions.md + mcp-config.json
-npx github:redasalem/job-hunter-os init --global --ide antigravity # ~/.gemini/antigravity/global_workflows + mcp_config.json
+npx github:redasalem/veycraft init --global --ide codex       # ~/.codex/AGENTS.md + config.toml + ~/.agents/skills
+npx github:redasalem/veycraft init --global --ide gemini      # ~/.gemini/GEMINI.md + settings.json + ~/.gemini/skills
+npx github:redasalem/veycraft init --global --ide claude      # ~/.claude/commands + ~/.claude/skills + ~/.claude.json
+npx github:redasalem/veycraft init --global --ide cursor      # ~/.cursor/rules/job-hunter.mdc + ~/.cursor/mcp.json
+npx github:redasalem/veycraft init --global --ide copilot     # ~/.copilot/copilot-instructions.md + mcp-config.json
+npx github:redasalem/veycraft init --global --ide antigravity # ~/.gemini/antigravity/global_workflows + mcp_config.json
 ```
 
 </div>
@@ -114,12 +116,16 @@ npx github:redasalem/job-hunter-os init --global --ide antigravity # ~/.gemini/a
 <div dir="ltr" align="left">
 
 ```bash
-git clone https://github.com/redasalem/job-hunter-os.git
-cd job-hunter-os
+git clone https://github.com/redasalem/veycraft.git
+cd veycraft
 node ./bin/cli.mjs doctor
 ```
 
 </div>
+
+> **هل لديك نسخة قديمة من `job-hunter-os`؟** يحوّل GitHub الروابط القديمة تلقائيًا، ويمكنك تحديث الـ remote بالأمر:
+> `git remote set-url origin https://github.com/redasalem/veycraft.git`
+> مجلدات `~/.job-hunter-os` القائمة وأوامر `job-hunter` / `job-hunter-os` تبقى مدعومة بالكامل.
 
 خيارات `--ide` المدعومة: `all, codex, gemini, copilot, claude, cursor, antigravity, opencode, windsurf, devin, cline, roo, kiro, junie, zed, goose, aider` — والتفاصيل في [`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md) و[`adapters/apps/openai-codex-cli.md`](adapters/apps/openai-codex-cli.md) و[`adapters/apps/gemini-and-copilot.md`](adapters/apps/gemini-and-copilot.md).
 
@@ -141,7 +147,7 @@ node ./bin/cli.mjs doctor
 <div dir="ltr" align="left">
 
 ```text
-job-hunter-os/
+veycraft/
 ├── AGENTS.md                 # القواعد الأساسية، عقد المحادثة، مصفوفة البدائل (A–E)، والضوابط الـ 10
 ├── bin/cli.mjs               # أداة CLI خالية من التبعيات (init, audit, route, verify, eval, doctor, sync-mcp...)
 ├── skills/                   # 50 مهارة Markdown + الفهرس REGISTRY.md + skills-manifest.json
@@ -171,7 +177,7 @@ node ./bin/cli.mjs proof             # إعادة توليد بطاقة الإث
 
 </div>
 
-![بطاقة الإثبات القابلة لإعادة الإنتاج لمشروع Job Hunter OS](assets/proof-card.svg)
+![بطاقة الإثبات القابلة لإعادة الإنتاج لمشروع Veycraft](assets/proof-card.svg)
 
 > **توضيح النطاق:** الأوامر `eval --baseline` و`eval --journeys` و`proof` تتحقق من النماذج المرجعية والمخططات وسلوك الـ CLI محليًا ([`evals/fixtures/ground-truth.json`](evals/fixtures/ground-truth.json) و[`evals/journeys/journey-matrix.json`](evals/journeys/journey-matrix.json)) وليست قياسًا عامًا لدقة النماذج الحية.
 
@@ -184,7 +190,7 @@ node ./bin/cli.mjs proof             # إعادة توليد بطاقة الإث
 | `audit <cv.md\|txt\|docx\|html\|doc> [--share]` | فحص السيرة محليًا، كشف SSRF والتوكنات و`.docx` المزيف، وإنتاج بطاقة مشاركة خالية من PII |
 | `route "<request>" [--json]` | توجيه أي طلب طبيعي لأقل مجموعة مهارات مناسبة مع البديل والمخرجات المتوقعة |
 | `verify <dir\|file> [--facts <json\|md>]` | التحقق بعد الكتابة من خلو الملفات من `{{...}}` وشرطات AI والأرقام/المهارات غير المؤكدة |
-| `init [--global] [--force] [--ide <name>]` | تهيئة المجلد أو `~/.job-hunter-os` وربط المهارات وإعدادات MCP للمحرّرات |
+| `init [--global] [--force] [--ide <name>]` | تهيئة المجلد أو `~/.veycraft` (مع الحفاظ على `~/.job-hunter-os` القديم) وربط المهارات وإعدادات MCP للمحرّرات |
 | `sync-mcp [--global]` | مزامنة آمنة لـ Playwright وNotion في Codex `config.toml` وGemini `settings.json` و`.vscode/mcp.json` وCursor وClaude وCopilot |
 | `doctor [--global] [--strict]` | فحص البيئة والبوابات الـ 5 و`50` مهارة وحداثة الكتيبات وخطاف الخصوصية |
 | `eval [--baseline \| --file <json> \| --journeys]` | تشغيل الاختبارات الـ 20، أو تقييم مخرجات نموذج خارجي، أو اختبارات الرحلات السبع |
@@ -197,7 +203,7 @@ node ./bin/cli.mjs proof             # إعادة توليد بطاقة الإث
 ## المساهمة والوثائق والرخصة
 
 - **الوثائق المرجعية:** [`AGENTS.md`](AGENTS.md) · [`skills/REGISTRY.md`](skills/REGISTRY.md) · [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · [`docs/SKILL_CATALOG.md`](docs/SKILL_CATALOG.md) · [`docs/COMPATIBILITY.md`](docs/COMPATIBILITY.md) · [`docs/execution-safety.md`](docs/execution-safety.md) · [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`SECURITY.md`](SECURITY.md) · [`CHANGELOG.md`](CHANGELOG.md).
-- **المساهمات مرحب بها:** إضافة نماذج ATS تجريبية، أو توثيق بوابات توظيف إقليمية، أو تحسين تكامل محرّرات الذكاء الاصطناعي، أو مشاركة نتيجة توظيف عبر [Share Outcome Issue](https://github.com/redasalem/job-hunter-os/issues/new?template=share-success.yml).
+- **المساهمات مرحب بها:** إضافة نماذج ATS تجريبية، أو توثيق بوابات توظيف إقليمية، أو تحسين تكامل محرّرات الذكاء الاصطناعي، أو مشاركة نتيجة توظيف عبر [Share Outcome Issue](https://github.com/redasalem/veycraft/issues/new?template=share-success.yml).
 
 مرخص تحت رخصة [MIT](LICENSE) — Copyright (c) 2026 Reda Salem (`@redasalem`). راجع [`NOTICE`](NOTICE) و[`AUTHORS.md`](AUTHORS.md) و[`PROVENANCE.json`](PROVENANCE.json).
 

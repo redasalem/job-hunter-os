@@ -1,6 +1,6 @@
 # Hermes Agent, Pi Coding Agent, Factory Droid & OpenClaw Adapter
 
-`job-hunter-os` follows the open `agentskills.io` `.agents/skills/*/SKILL.md` standard and `AGENTS.md` conventions for autonomous terminal and scheduled agent harnesses.
+`veycraft` follows the open `agentskills.io` `.agents/skills/*/SKILL.md` standard and `AGENTS.md` conventions for autonomous terminal and scheduled agent harnesses.
 
 ## 1. Hermes Agent
 - Point Hermes at `AGENTS.md` and `skills/REGISTRY.md` as workspace instructions, and attach Playwright MCP from `mcp/mcp.template.json`.

@@ -1,6 +1,6 @@
 # Model Tuning Guide — Google Gemini (Pro / Flash & Antigravity)
 
-Optimized for **Antigravity**, **Gemini CLI**, and **Gemini Pro / Flash** agents running `job-hunter-os`.
+Optimized for **Antigravity**, **Gemini CLI**, and **Gemini Pro / Flash** agents running `veycraft`.
 
 ## 1. Large Context Without Eager Loading
 - Even with a 1M+ token window, **still follow Progressive Disclosure** (`AGENTS.md` -> `skills/REGISTRY.md` -> active skill only). Loading all 35+ playbooks upfront dilutes attention across unrelated platform rules.
