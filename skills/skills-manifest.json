@@ -1412,6 +1412,43 @@
         "audit and proposed copy saved as DRAFT_ONLY to logs/insights/linkedin-seo-audit-YYYY-MM-DD.md; any user-approved live edit occurred only after explicit APPROVE and passed post-save browser_snapshot verification"
       ],
       "path": "skills/linkedin-growth.md"
+    },
+    {
+      "name": "profile-intelligence-engine",
+      "version": "1.0.0",
+      "category": "core",
+      "description": "Load when optimizing, auditing, syncing, or updating a professional profile across LinkedIn, job boards, ATS portals, or portfolios (/profile-update); normalizes profile data, drafts an evidence-grounded Profile Update Plan, maps fields via platform adapters, and supports batch fill with fresh read-back verification.",
+      "triggers": [
+        "/profile-update",
+        "optimize my professional profile",
+        "update my profile for this job",
+        "sync my career profile across platforms",
+        "update my job board profiles",
+        "fill profile fields from my CV"
+      ],
+      "requires_mcp": [
+        "none"
+      ],
+      "optional_mcp": [
+        "playwright"
+      ],
+      "preconditions": [
+        "verified candidate facts available in context/ (or user-confirmed session CV)",
+        "target role, job description, or general positioning goal supplied",
+        "platform access is legitimate and supported for any live read or write"
+      ],
+      "requires_skills": [
+        "resume-ingestion",
+        "tailor-resume-and-verify",
+        "meta-self-verification"
+      ],
+      "verification": [
+        "every proposed claim traces to verified candidate evidence or is flagged needs_user_confirmation",
+        "plan validated against schemas/profile-update-plan.schema.json via node ./bin/cli.mjs verify",
+        "existing profile content preserved (add/replace actions only; zero remove actions)",
+        "fresh read-back verification confirms saved state before reporting verified"
+      ],
+      "path": "skills/profile-intelligence-engine.md"
     }
   ]
 }

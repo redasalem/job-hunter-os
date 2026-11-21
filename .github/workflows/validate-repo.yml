@@ -90,8 +90,8 @@ jobs:
           agent_skills = sorted(pathlib.Path(".agents/skills").glob("*/SKILL.md"))
           expected_wrappers = {
               "apply-url", "contract-and-nda-auditor", "daily-run", "demo",
-              "linkedin-growth", "offer-negotiator", "quick-tailor",
-              "recruiter-inbox-triage", "rejection-pattern-analyzer",
+              "linkedin-growth", "offer-negotiator", "profile-intelligence-engine",
+              "quick-tailor", "recruiter-inbox-triage", "rejection-pattern-analyzer",
               "score-calibration", "setup", "tailor-cv", "weekly-report",
           }
           actual_wrappers = {ap.parent.name for ap in agent_skills}
@@ -209,6 +209,7 @@ jobs:
       - name: Check CLI syntax & run deterministic Skill Eval Harness + Journey Tests
         run: |
           node --check bin/cli.mjs
+          node --check bin/profile-intelligence.mjs
           node ./bin/cli.mjs eval --baseline
           node ./bin/cli.mjs eval --file evals/results/live-agent-eval-run.json
           node ./bin/cli.mjs eval --journeys

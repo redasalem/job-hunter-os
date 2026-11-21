@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/redasalem/job-hunter-os/schemas/profile-update-plan.schema.json",
+  "title": "Job Hunter OS Profile Update Plan",
+  "description": "A reviewable, evidence-grounded plan for profile edits across career platforms. Removal actions are intentionally not supported.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "target_role", "platform", "mode", "changes"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "plan_id": { "type": "string", "minLength": 1 },
+    "target_role": { "type": "string", "minLength": 1 },
+    "target_job_url": { "type": ["string", "null"], "format": "uri" },
+    "platform": { "type": "string", "minLength": 1 },
+    "profile_url": { "type": ["string", "null"], "format": "uri" },
+    "mode": { "enum": ["draft_only", "review", "approved_apply"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "adapter": { "$ref": "#/$defs/adapter_capability_summary" },
+    "missing_facts": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "skipped_unchanged": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "verification_summary": { "$ref": "#/$defs/verification_summary" },
+    "changes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/change" }
+    }
+  },
+  "$defs": {
+    "adapter_capability_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["platform_id", "capabilities", "requires_approval"],
+      "properties": {
+        "platform_id": { "type": "string", "minLength": 1 },
+        "capabilities": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["read", "draft", "fill", "save", "verify"],
+          "properties": {
+            "read": { "type": "boolean" },
+            "draft": { "type": "boolean" },
+            "fill": { "type": "boolean" },
+            "save": { "type": "boolean" },
+            "verify": { "type": "boolean" }
+          }
+        },
+        "requires_approval": { "type": "boolean" },
+        "limitations": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "verification_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome", "verified_count", "total_changes"],
+      "properties": {
+        "outcome": {
+          "enum": [
+            "prepared",
+            "approved",
+            "applied",
+            "verified",
+            "partially_applied",
+            "blocked",
+            "not_verified"
+          ]
+        },
+        "verified_count": { "type": "integer", "minimum": 0 },
+        "total_changes": { "type": "integer", "minimum": 0 },
+        "verified_at": { "type": ["string", "null"], "format": "date-time" },
+        "notes": { "type": "string" }
+      }
+    },
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "section",
+        "field",
+        "action",
+        "before",
+        "after",
+        "reason",
+        "evidence",
+        "confidence",
+        "requires_confirmation",
+        "fact_basis",
+        "status"
+      ],
+      "properties": {
+        "section": { "type": "string", "minLength": 1 },
+        "field": { "type": "string", "minLength": 1 },
+        "action": { "enum": ["add", "replace"] },
+        "before": { "type": ["string", "null"] },
+        "after": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "requires_confirmation": { "type": "boolean" },
+        "fact_basis": {
+          "enum": ["verified", "user_confirmed", "inferred", "platform_specific"]
+        },
+        "adapter_capability": {
+          "enum": ["read_only", "draft_only", "fill_supported", "save_and_verify_supported"]
+        },
+        "verification_evidence": { "type": ["string", "null"] },
+        "status": {
+          "enum": [
+            "draft",
+            "needs_user_confirmation",
+            "approved",
+            "applied",
+            "verified",
+            "not_verified",
+            "blocked",
+            "needs_review"
+          ]
+        }
+      }
+    }
+  }
+}

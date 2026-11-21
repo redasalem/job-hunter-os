@@ -36,7 +36,10 @@
           "start_date": { "type": "string", "pattern": "^\\d{4}-(0[1-9]|1[0-2])$" },
           "end_date": { "type": ["string", "null"], "pattern": "^\\d{4}-(0[1-9]|1[0-2])$" },
           "current": { "type": "boolean" },
-          "bullets": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          "bullets": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "responsibilities": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "achievements": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "measurable_impact": { "type": "array", "items": { "type": "string", "minLength": 1 } }
         }
       }
     },
@@ -64,6 +67,105 @@
     "languages": { "type": "array", "items": { "type": "object", "properties": { "language": { "type": "string" }, "proficiency": { "type": "string" } } } },
     "certifications": { "type": "array", "items": { "type": "string" } },
     "target": { "type": "object", "description": "Render-only: job this tailored copy is for", "properties": { "company": { "type": "string" }, "role": { "type": "string" }, "job_id": { "type": "string" } } },
-    "tailoring_notes": { "type": "object", "description": "Render-only brief written to tailoring-notes.md", "properties": { "jd_asked": { "type": "array", "items": { "type": "string" } }, "changes": { "type": "array", "items": { "type": "string" } }, "gaps": { "type": "array", "items": { "type": "string" } } } }
+    "tailoring_notes": { "type": "object", "description": "Render-only brief written to tailoring-notes.md", "properties": { "jd_asked": { "type": "array", "items": { "type": "string" } }, "changes": { "type": "array", "items": { "type": "string" } }, "gaps": { "type": "array", "items": { "type": "string" } } } },
+    "target_job_titles": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "career_objectives": { "type": "string" },
+    "publications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title"],
+        "properties": {
+          "title": { "type": "string", "minLength": 1 },
+          "publisher": { "type": "string" },
+          "date": { "type": "string" },
+          "url": { "type": "string", "pattern": "^$|^https://" },
+          "summary": { "type": "string" }
+        }
+      }
+    },
+    "work_preferences": {
+      "type": "object",
+      "properties": {
+        "work_modes": { "type": "array", "items": { "type": "string" } },
+        "preferred_locations": { "type": "array", "items": { "type": "string" } },
+        "relocation_open": { "type": "boolean" },
+        "industry_preferences": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "fact_provenance": {
+      "type": "object",
+      "description": "Separates verified and user-confirmed facts from inferences, missing info, and proposed improvements. Inferences must never be promoted to verified_facts without explicit user confirmation.",
+      "properties": {
+        "verified_facts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["claim", "source"],
+            "properties": {
+              "claim": { "type": "string", "minLength": 1 },
+              "source": { "type": "string", "minLength": 1 },
+              "verified_at": { "type": ["string", "null"], "format": "date-time" }
+            }
+          }
+        },
+        "user_confirmed_facts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["claim", "confirmed_at"],
+            "properties": {
+              "claim": { "type": "string", "minLength": 1 },
+              "confirmed_at": { "type": "string", "format": "date-time" },
+              "source": { "type": "string" }
+            }
+          }
+        },
+        "inferred_info": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["claim", "basis", "requires_confirmation"],
+            "properties": {
+              "claim": { "type": "string", "minLength": 1 },
+              "basis": { "type": "string", "minLength": 1 },
+              "requires_confirmation": { "const": true }
+            }
+          }
+        },
+        "missing_info": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "proposed_improvements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["field", "proposal", "reason"],
+            "properties": {
+              "field": { "type": "string", "minLength": 1 },
+              "proposal": { "type": "string", "minLength": 1 },
+              "reason": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "platform_profiles": {
+      "type": "object",
+      "description": "Platform-specific profile values and adapter metadata keyed by platform id (e.g., linkedin, wellfound, wuzzuf, generic).",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "profile_url": { "type": ["string", "null"], "format": "uri" },
+          "last_inspected_at": { "type": ["string", "null"], "format": "date-time" },
+          "fields": {
+            "type": "object",
+            "additionalProperties": { "type": ["string", "array", "null"] }
+          },
+          "platform_specific_notes": { "type": "string" }
+        }
+      }
+    }
   }
 }

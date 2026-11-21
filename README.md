@@ -72,7 +72,8 @@ Ask naturally—the **Universal Task Intent Router** ([`skills/REGISTRY.md`](ski
 | **1. Instant Sandbox** | `/demo` | Runs a 15-second simulation across 3 sample JDs ([`examples/sandbox-demo/`](examples/sandbox-demo/sample-jds.md)) with a full tailored preview for Job #1 | **None** (no CV, no browser) |
 | **2. First Real Tailored CV** | `/quick-tailor` | Ingests 1 real CV + 1 JD, confirms facts, runs `verify`, and outputs `HTML`/`TXT`/Word `.doc` + True Gaps + interview prep | **CV + 1 JD only** (no login) |
 | **3. LinkedIn Profile & SEO** | `/linkedin-growth` | Scores profile consistency against your CV (`0–100`) and writes `DRAFT_ONLY` improvements (live edit gated by `APPROVE`) | **Profile text / PDF / screenshot** |
-| **4. Full Career OS (Optional)** | `login` → `/setup` → `/daily-run` | Multi-board discovery, ghost filtering, form prep, `<= 75`-word outreach drafts, and tracking | **Browser login + 5 readiness gates** |
+| **4. Profile Intelligence** | `/profile-update` | Audits & syncs profiles across LinkedIn, job boards, ATS & portfolios via a schema-validated `DRAFT_ONLY` update plan | **CV/profile facts + target role** |
+| **5. Full Career OS (Optional)** | `login` → `/setup` → `/daily-run` | Multi-board discovery, ghost filtering, form prep, `<= 75`-word outreach drafts, and tracking | **Browser login + 5 readiness gates** |
 
 ---
 
@@ -226,3 +227,14 @@ Works out-of-the-box with major global, regional, and ATS platforms — **plus a
 - **Direct ATS Platforms:** Greenhouse, Lever, Ashby, Workable, SmartRecruiters, Workday, BambooHR, Breezy HR
 - **B2B & Contract Networks:** Toptal, Braintrust, Lemon.io, Gun.io, Contra, Arc.dev, Turing (`skills/platforms/b2b-contract-networks.md`)
 - **Any Custom URL:** Paste any job link from any company career page or board; the AI reads the live DOM semantically (`Role -> Label -> Placeholder -> Text`) without needing a pre-built site template.
+
+---
+
+## Profile Intelligence Engine (`/profile-update`)
+
+Shared, zero-dependency intelligence layer (`skills/profile-intelligence-engine.md`, `bin/profile-intelligence.mjs`, `schemas/profile-update-plan.schema.json`) for keeping your professional profile sharp, honest, and consistent across LinkedIn and other job platforms:
+
+- **How to trigger:** Run `/profile-update` or ask naturally (*"Optimize my professional profile"*, *"Update my profile for this job"*, *"Sync my career profile across platforms"*, *"Update my job board profiles"*).
+- **7-criteria audit & fact integrity:** Evaluates Relevance, Keyword coverage, Clarity, Impact, Consistency, Discoverability, and Quality against your local verified profile vault (`schemas/resume-data.schema.json`). Separates `verified_facts`, `user_confirmed_facts`, `inferred_info`, and `missing_info`—never promotes inferences or fabricates experience.
+- **Draft-first consolidated review:** Outputs a schema-validated `Profile Update Plan` (`add` and `replace` actions only; zero `remove`) and one field-level diff table. Unchanged fields are skipped automatically (`skipped_unchanged`).
+- **Platform adapters & honest limitations:** Supports declarative adapters for `linkedin`, `wellfound`, `ats`, `job_boards`, `portfolio`, and a conservative `generic` read/draft-only fallback for unknown sites. Live filling/saving requires explicit user `APPROVE`, an authorized browser session, and fresh post-save read-back verification (`verified`, `partially_applied`, `not_verified`, `blocked`, or `needs_review`).

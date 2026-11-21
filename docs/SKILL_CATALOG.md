@@ -37,6 +37,7 @@ Every skill in `job-hunter-os` (`48` consolidated skills total: `30` core/career
 | `25` | [`skills/25-prompt-injection-defense.md`](../skills/25-prompt-injection-defense.md) | Untrusted-DOM prompt-injection defense, honeypot guard, and recruiter attention-check detector |
 | `26` | [`skills/26-deduplication-and-blacklist-guard.md`](../skills/26-deduplication-and-blacklist-guard.md) | Employer/domain blacklist & cross-channel canonical job fingerprinting (`company::role_title`) |
 | `—` | [`skills/linkedin-growth.md`](../skills/linkedin-growth.md) | Grounded `0–100` Recruiter-SEO LinkedIn audit, CV-sync & rewrites (`DRAFT_ONLY` default; `APPROVE`-gated live edits) |
+| `—` | [`skills/profile-intelligence-engine.md`](../skills/profile-intelligence-engine.md) | Cross-platform Profile Intelligence Engine: schema-validated update plans, adapter contracts, batch-fill & fresh read-back |
 | `—` | [`skills/fallback-no-mcp.md`](../skills/fallback-no-mcp.md) | Non-MCP & missing-capability fallback (Web AI chats & manual-assisted IDE flows) |
 
 ---

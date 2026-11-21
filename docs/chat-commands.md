@@ -12,6 +12,7 @@ All slash commands below (plus natural-language requests routed via [`skills/REG
 | `/apply-url` | Single URL (`APPROVE`-gated) | Score, tailor, and safely process this one job URL | [apply-url](../.agent/workflows/apply-url.md) | [00-daily-run](../skills/00-daily-run.md) |
 | `/weekly-report` | Local logs only (no MCP needed) | Generate my weekly market and skill-gap report | [weekly-report](../.agent/workflows/weekly-report.md) | [06-log-and-insights](../skills/06-log-and-insights.md) |
 | `/linkedin-growth` | `DRAFT_ONLY` default (`APPROVE` for live edits) | Review my LinkedIn profile, sync it with my CV, or draft `<=75`-word outreach | [linkedin-growth](../.agent/workflows/linkedin-growth.md) | [linkedin-growth](../skills/linkedin-growth.md), [05-outreach-and-interview-prep](../skills/05-outreach-and-interview-prep.md) |
+| `/profile-update` | `DRAFT_ONLY` plan (`schemas/profile-update-plan.schema.json`) | Optimize or sync my professional profile across LinkedIn and job boards | [profile-update](../.agent/workflows/profile-update.md) | [profile-intelligence-engine](../skills/profile-intelligence-engine.md), [03-tailor-resume-and-verify](../skills/03-tailor-resume-and-verify.md) |
 
 | IDE / Harness | Canonical Instruction Entry | Workflow / Command Discovery |
 |---|---|---|
