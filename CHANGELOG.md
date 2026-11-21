@@ -5,6 +5,17 @@ All notable changes to **`Veycraft`** *(formerly `job-hunter-os`)* will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2026-11-21 — Developer Installation, npm Packaging & AI Agent Onboarding
+
+### Added
+- **Machine-Readable CLI Diagnostics (`bin/cli.mjs`):** Added `--json` output support for `veycraft doctor --json`, `veycraft status --json`, and `veycraft --version --json` for deterministic AI coding agent discovery.
+- **Cross-Platform Data Home & Installer Modes (`bin/cli.mjs`, `scripts/install.sh`, `scripts/install.ps1`):** Added `VEYCRAFT_HOME` and Linux `XDG_DATA_HOME/veycraft` resolution (while preserving existing `~/.veycraft` and legacy `~/.job-hunter-os`), plus `--dry-run` / `-DryRun`, non-destructive `--uninstall` / `-Uninstall`, and Node `>= 18` checks.
+- **npm Package Readiness & CI Tarball Guard (`package.json`, `.github/workflows/publish-npm.yml`, `.github/workflows/validate-repo.yml`):** Added `.github/copilot-instructions.md`, `.github/prompts/`, and `.github/CODEOWNERS` to the npm `files` allowlist, added `author`, `bugs`, `keywords`, `publishConfig`, `test`, `doctor`, `pack:check`, and `prepublishOnly` scripts, and added Test 8 in `evals/journeys/run-journeys.test.mjs`.
+
+### Changed
+- **Clean Uninitialized `doctor` Behavior (`bin/cli.mjs`):** Updated `veycraft doctor` to verify bundled package provenance when run before `init` and emit clear `veycraft init --global` / `veycraft init` next steps instead of false provenance tamper failures.
+- **Developer-First Bilingual READMEs (`README.md`, `README.ar.md`, `assets/proof-card.svg`):** Rebuilt screen 1 of both English and Arabic RTL READMEs with 3 installation paths (`npx`, `npm install -g`, source clone), Requirements, safe First Run, Universal AI Agent Onboarding prompt, Data Locations, and non-destructive Upgrade/Uninstall instructions, and regenerated `assets/proof-card.svg` for `v2.0.1`.
+
 ## [2.0.0] - 2026-11-21 — Veycraft Rebrand & Profile Intelligence Engine
 
 ### Added
