@@ -208,7 +208,9 @@ node ./bin/cli.mjs proof             # Regenerates logs/exports/proof-card.svg f
 - [**`docs/ARCHITECTURE.md`**](docs/ARCHITECTURE.md) & [**`docs/SKILL_CATALOG.md`**](docs/SKILL_CATALOG.md) — 6-phase pipeline and complete `48`-skill index (`30` core, `4` meta, `7` platform, `7` ATS)
 - [**`docs/COMPATIBILITY.md`**](docs/COMPATIBILITY.md) & [**`docs/chat-commands.md`**](docs/chat-commands.md) — 25+ AI IDE setups, 6 LLM tuning guides, and command cheat sheet
 - [**`docs/execution-safety.md`**](docs/execution-safety.md), [**`SECURITY.md`**](SECURITY.md) & [**`CHANGELOG.md`**](CHANGELOG.md) — Safety boundaries, vulnerability disclosure, and release notes
+- [**`ACCEPTANCE.md`**](ACCEPTANCE.md) — Contributor non-negotiables mapped to CI/CLI checks (professionalism contract)
 - [**`CONTRIBUTING.md`**](CONTRIBUTING.md) & [**`HIRED.md`**](HIRED.md) — Add ATS fixtures, regional board playbooks, IDE adapters, or share outcomes via [Share Outcome Issue](https://github.com/redasalem/job-hunter-os/issues/new?template=share-success.yml)
+- [**`examples/outputs/sample-tailoring-notes.md`**](examples/outputs/sample-tailoring-notes.md) — Canonical synthetic Evidence Map / True Gaps / heatmap notes shape
 
 ---
 

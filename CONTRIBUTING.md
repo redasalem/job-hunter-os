@@ -2,6 +2,8 @@
 
 `job-hunter-os` uses a **Markdown-first architecture with a supported, zero-dependency Node.js CLI (`bin/cli.mjs`)**.
 
+Before opening a PR, read the contributor contract in [`ACCEPTANCE.md`](ACCEPTANCE.md) (maps non-negotiables to CI/CLI checks) and use the professionalism sections in [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md).
+
 Every contribution must preserve the foundational constraints:
 
 - **Zero npm dependencies in the core:** `package.json` must remain strictly `"dependencies": {}` and `"devDependencies": {}`. Use Node.js built-ins, pure Markdown, HTML, CSS, JavaScript, and SVG only.
@@ -89,3 +91,4 @@ Verify that first-time users on a specific AI IDE or CLI harness can discover `/
 - **Skill Frontmatter & Sections:** Every skill in `skills/` must include the 8 YAML frontmatter keys (`name`, `version`, `description`, `triggers`, `requires_mcp`, `preconditions`, `requires_skills`, `verification`) and the 3 exact H2 headings (`## When to Use & Preconditions`, `## Deterministic Step-by-Step Execution`, `## Anti-Patterns (What NEVER To Do) & Self-Verification Check`).
 - **Resume HTML Templates:** Single-column semantic HTML (`templates/ats-resume-template.html`, `templates/ats-cover-letter-template.html`), escaped source facts, zero `<script>` tags, zero remote assets, zero hidden text.
 - **Security & Conduct:** Report security issues privately per [SECURITY.md](SECURITY.md) and follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+- **Acceptance & examples:** Keep [`ACCEPTANCE.md`](ACCEPTANCE.md) in sync when changing non-negotiables. Prefer synthetic sample outputs under [`examples/outputs/`](examples/outputs/) (see `sample-tailoring-notes.md`) - never commit real CVs or personal data.
