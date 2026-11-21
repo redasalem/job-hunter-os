@@ -299,3 +299,228 @@ test('6. Verification outcomes: requires fresh read-back evidence for verified a
   assert.equal(engine.summarizeVerificationOutcome(makeTwo('blocked', 'blocked')).outcome, 'blocked');
   assert.equal(engine.summarizeVerificationOutcome(makeTwo('not_verified', 'not_verified')).outcome, 'not_verified');
 });
+
+test('7. Remediation — Registry adapter enforcement blocks omitted/spoofed capabilities while preserving legitimate saves', () => {
+  // 1. Generic platform with omitted adapter attempting applied -> REJECTED
+  const genericOmitted = makeValidPlan({ platform: 'generic', mode: 'approved_apply' });
+  delete genericOmitted.adapter;
+  genericOmitted.changes[0].status = 'applied';
+  delete genericOmitted.changes[0].adapter_capability;
+  const r1 = engine.validateProfileUpdatePlan(genericOmitted);
+  assert.equal(r1.valid, false);
+  assert.match(r1.errors.join('\n'), /does not support save/i);
+
+  // 2. Unknown platform with omitted adapter attempting applied -> REJECTED
+  const unknownOmitted = makeValidPlan({ platform: 'mystery-regional-board', mode: 'approved_apply' });
+  delete unknownOmitted.adapter;
+  unknownOmitted.changes[0].status = 'applied';
+  delete unknownOmitted.changes[0].adapter_capability;
+  const r2 = engine.validateProfileUpdatePlan(unknownOmitted);
+  assert.equal(r2.valid, false);
+  assert.match(r2.errors.join('\n'), /does not support save/i);
+
+  // 3. Generic platform spoofing save: true -> REJECTED
+  const genericSpoofSave = makeValidPlan({
+    platform: 'generic',
+    mode: 'approved_apply',
+    adapter: {
+      platform_id: 'generic',
+      capabilities: { read: true, draft: true, fill: false, save: true, verify: false },
+      requires_approval: true,
+    },
+  });
+  genericSpoofSave.changes[0].status = 'applied';
+  delete genericSpoofSave.changes[0].adapter_capability;
+  const r3 = engine.validateProfileUpdatePlan(genericSpoofSave);
+  assert.equal(r3.valid, false);
+  assert.match(r3.errors.join('\n'), /cannot exceed registered adapter/i);
+
+  // 4. Adapter spoofing fill/verify capabilities beyond registry -> REJECTED
+  const spoofFillVerify = makeValidPlan({
+    platform: 'portfolio',
+    mode: 'draft_only',
+    adapter: {
+      platform_id: 'portfolio',
+      capabilities: { read: true, draft: true, fill: true, save: false, verify: true },
+      requires_approval: true,
+    },
+  });
+  spoofFillVerify.changes[0].adapter_capability = 'fill_supported';
+  const r4 = engine.validateProfileUpdatePlan(spoofFillVerify);
+  assert.equal(r4.valid, false);
+  assert.match(r4.errors.join('\n'), /fill.*cannot exceed registered adapter|fill_supported.*exceeds/i);
+
+  // 5. Legitimate LinkedIn approved_apply + verified with read-back evidence -> ACCEPTED
+  const legitLinkedin = makeValidPlan({ platform: 'linkedin', mode: 'approved_apply' });
+  legitLinkedin.changes[0].status = 'verified';
+  legitLinkedin.changes[0].verification_evidence = 'Fresh snapshot confirmed updated headline';
+  const r5 = engine.validateProfileUpdatePlan(legitLinkedin, { factsConfig: FACTS_CONFIG });
+  assert.equal(r5.valid, true, r5.errors.join('; '));
+});
+
+test('8. Remediation — CLI routing covers advertised EN/AR profile prompts without misrouting CV or legacy LinkedIn prompts', () => {
+  for (const prompt of [
+    'Fill profile fields from my CV',
+    'Update my LinkedIn profile for this job',
+    'Audit my GitHub profile',
+    'Optimize my portfolio profile',
+    'حسّن ملفي المهني',
+    'حدّث بروفايلي لهذه الوظيفة',
+  ]) {
+    const res = runCli(['route', prompt, '--json']);
+    assert.equal(res.status, 0, `route failed for "${prompt}": ${res.stderr}`);
+    const parsed = JSON.parse(res.stdout);
+    assert.equal(parsed.intent, 'profile-intelligence', `Expected profile-intelligence for "${prompt}", got ${parsed.intent}`);
+    assert.ok(parsed.skills.includes('profile-intelligence-engine'));
+  }
+
+  // Negative checks: pure CV/resume requests must NOT route to profile-intelligence
+  for (const [prompt, expectedIntent] of [
+    ['Improve my CV summary.', 'cv-edit'],
+    ['Tailor my CV to this job.', 'tailor-cv'],
+    ['Create a CV from scratch.', 'cv-create'],
+    ['Review my uploaded CV.', 'cv-review-import'],
+    ['Find remote React jobs.', 'job-discovery-and-triage'],
+  ]) {
+    const res = runCli(['route', prompt, '--json']);
+    assert.equal(res.status, 0);
+    const parsed = JSON.parse(res.stdout);
+    assert.equal(parsed.intent, expectedIntent, `Misrouted pure non-profile prompt "${prompt}"`);
+    assert.ok(!parsed.skills.includes('profile-intelligence-engine'));
+  }
+
+  // Legacy LinkedIn-specific requests preserve linkedin-profile intent + linkedin-growth
+  for (const prompt of [
+    'Review my LinkedIn profile.',
+    'Improve my LinkedIn profile.',
+    'Make my profile consistent with my CV.',
+    'Optimize my profile for React and Full-Stack JavaScript roles.',
+  ]) {
+    const res = runCli(['route', prompt, '--json']);
+    assert.equal(res.status, 0);
+    const parsed = JSON.parse(res.stdout);
+    assert.equal(parsed.intent, 'linkedin-profile', `Legacy LinkedIn prompt "${prompt}" should keep linkedin-profile`);
+    assert.ok(parsed.skills.includes('linkedin-growth'));
+  }
+});
+
+test('9. Remediation — Full schema/validator parity rejects malformed URLs, dates, arrays, extra keys, and bad verification_summary', () => {
+  const invalidCases = [
+    ['empty plan_id', makeValidPlan({ plan_id: '' })],
+    ['bad profile_url', makeValidPlan({ profile_url: 'not-a-uri' })],
+    ['unsafe javascript target_job_url', makeValidPlan({ target_job_url: 'javascript:alert(1)' })],
+    ['bad created_at', makeValidPlan({ created_at: 'yesterday' })],
+    ['missing_facts string', makeValidPlan({ missing_facts: 'Kubernetes' })],
+    ['missing_facts empty item', makeValidPlan({ missing_facts: [''] })],
+    ['skipped_unchanged numeric item', makeValidPlan({ skipped_unchanged: [123] })],
+    ['adapter extra property', makeValidPlan({ adapter: { ...makeValidPlan().adapter, extra_key: 1 } })],
+    ['adapter capabilities extra property', makeValidPlan({ adapter: { ...makeValidPlan().adapter, capabilities: { ...makeValidPlan().adapter.capabilities, delete: true } } })],
+    ['verification_summary missing counts', makeValidPlan({ verification_summary: { outcome: 'verified' } })],
+    ['verification_summary negative verified_count', makeValidPlan({ verification_summary: { outcome: 'verified', verified_count: -1, total_changes: 1 } })],
+    ['verification_summary verified_count > total_changes', makeValidPlan({ verification_summary: { outcome: 'verified', verified_count: 2, total_changes: 1 } })],
+    ['verification_summary extra key', makeValidPlan({ verification_summary: { outcome: 'prepared', verified_count: 0, total_changes: 1, bogus: true } })],
+    ['verification_evidence non-string', (() => { const p = makeValidPlan(); p.changes[0].verification_evidence = 12345; return p; })()],
+  ];
+
+  for (const [label, badPlan] of invalidCases) {
+    const res = engine.validateProfileUpdatePlan(badPlan);
+    assert.equal(res.valid, false, `Expected rejection for "${label}"`);
+  }
+
+  // Boundary test: valid optional fields, empty changes, null URLs, valid verification_summary
+  const boundaryValid = makeValidPlan({
+    profile_url: null,
+    target_job_url: null,
+    missing_facts: [],
+    skipped_unchanged: ['headline'],
+    changes: [],
+    verification_summary: {
+      outcome: 'prepared',
+      verified_count: 0,
+      total_changes: 0,
+      verified_at: null,
+      notes: 'All fields already aligned',
+    },
+  });
+  const bv = engine.validateProfileUpdatePlan(boundaryValid);
+  assert.equal(bv.valid, true, bv.errors.join('; '));
+});
+
+test('10. Remediation — Partial verification outcomes, draft_only/review lifecycle, add/replace semantics & vault validation', () => {
+  const mk = (...statuses) => ({
+    changes: statuses.map((s, i) => ({ ...makeValidPlan().changes[0], field: `f${i}`, status: s })),
+  });
+  assert.equal(engine.summarizeVerificationOutcome(mk()).outcome, 'prepared');
+  assert.equal(engine.summarizeVerificationOutcome(mk('applied', 'draft')).outcome, 'partially_applied');
+  assert.equal(engine.summarizeVerificationOutcome(mk('approved', 'draft')).outcome, 'prepared');
+  assert.equal(engine.summarizeVerificationOutcome(mk('verified', 'verified')).outcome, 'verified');
+  assert.equal(engine.summarizeVerificationOutcome(mk('applied', 'applied')).outcome, 'applied');
+  assert.equal(engine.summarizeVerificationOutcome(mk('verified', 'applied')).outcome, 'partially_applied');
+  assert.equal(engine.summarizeVerificationOutcome(mk('needs_review', 'needs_review')).outcome, 'prepared');
+  assert.equal(engine.summarizeVerificationOutcome(mk('needs_review', 'needs_review')).needs_review_count, 2);
+  assert.equal(engine.summarizeVerificationOutcome(mk('approved', 'blocked')).outcome, 'blocked');
+  assert.equal(engine.summarizeVerificationOutcome(mk('blocked', 'not_verified')).outcome, 'not_verified');
+
+  // Lifecycle: draft_only rejects approved; review rejects applied
+  const draftApproved = makeValidPlan({ mode: 'draft_only' });
+  draftApproved.changes[0].status = 'approved';
+  assert.equal(engine.validateProfileUpdatePlan(draftApproved).valid, false);
+
+  const reviewApplied = makeValidPlan({ mode: 'review' });
+  reviewApplied.changes[0].status = 'applied';
+  assert.equal(engine.validateProfileUpdatePlan(reviewApplied).valid, false);
+
+  // Add / replace semantics
+  const badAdd = makeValidPlan();
+  badAdd.changes[0].action = 'add';
+  badAdd.changes[0].before = 'Existing headline';
+  assert.equal(engine.validateProfileUpdatePlan(badAdd).valid, false);
+
+  const goodAdd = makeValidPlan();
+  goodAdd.changes[0].action = 'add';
+  goodAdd.changes[0].before = null;
+  assert.equal(engine.validateProfileUpdatePlan(goodAdd).valid, true);
+
+  const badReplace = makeValidPlan();
+  badReplace.changes[0].action = 'replace';
+  badReplace.changes[0].before = null;
+  assert.equal(engine.validateProfileUpdatePlan(badReplace).valid, false);
+
+  // Profile vault validation: missing source, missing basis, bad array types, user_confirmed overlap
+  assert.equal(engine.validateProfileVault({ fact_provenance: { verified_facts: [{ claim: 'X' }] } }).valid, false);
+  assert.equal(engine.validateProfileVault({ fact_provenance: { inferred_info: [{ claim: 'X', requires_confirmation: true }] } }).valid, false);
+  assert.equal(engine.validateProfileVault({ fact_provenance: { verified_facts: 'not-an-array' } }).valid, false);
+  assert.equal(
+    engine.validateProfileVault({
+      fact_provenance: {
+        user_confirmed_facts: [{ claim: 'Led API redesign', confirmed_at: '2026-11-21T00:00:00Z' }],
+        inferred_info: [{ claim: 'Led API redesign', basis: 'Mentioned API', requires_confirmation: true }],
+      },
+    }).valid,
+    false,
+  );
+
+  // Valid vault passes both programmatic validator and CLI `verify`
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'jho-vault-verify-'));
+  try {
+    const validVault = {
+      owner_verified: true,
+      fact_provenance: {
+        verified_facts: [{ claim: '6 years Node.js', source: 'context/cv.md', verified_at: '2026-11-21T00:00:00Z' }],
+        user_confirmed_facts: [{ claim: 'Remote preferred', confirmed_at: '2026-11-21T00:00:00Z' }],
+        inferred_info: [{ claim: 'Open to technical mentoring', basis: 'Led code reviews', requires_confirmation: true }],
+        missing_info: ['Kubernetes years'],
+      },
+    };
+    assert.equal(engine.validateProfileVault(validVault).valid, true);
+    const vPath = path.join(tmp, 'resume-data.json');
+    fs.writeFileSync(vPath, JSON.stringify(validVault, null, 2));
+    assert.equal(runCli(['verify', vPath]).status, 0);
+
+    const badVaultPath = path.join(tmp, 'bad-resume-data.json');
+    fs.writeFileSync(badVaultPath, JSON.stringify({ fact_provenance: { verified_facts: [{ claim: 'Missing source' }] } }));
+    assert.notEqual(runCli(['verify', badVaultPath]).status, 0);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});

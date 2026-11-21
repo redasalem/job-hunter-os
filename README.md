@@ -6,12 +6,12 @@ Give your existing AI coding agent (**OpenAI Codex CLI, Claude Code, Cursor, Ant
 
 No fabricated experience. No blind submissions. No `npm install` bloat. No external API keys.
 
-**48 Markdown Skills** · **0 Core/Dev npm Dependencies** · **Local-First (`logs/`, `context/`)** · **Human `APPROVE` Gate**
+**50 Markdown Skills** · **0 Core/Dev npm Dependencies** · **Local-First (`logs/`, `context/`)** · **Human `APPROVE` Gate**
 
 **[Interactive Demo ↗](https://redasalem.github.io/job-hunter-os/)** · **[Quick Start](#fastest-ways-to-get-started)** · **[AI Tool Setup](#installation--ai-tool-setup)** · **[CLI Reference](#cli-reference-binclimjs)** · **[العربية (RTL)](README.ar.md)**
 
 [![Zero Core Dependencies](https://img.shields.io/badge/Core_CLI-0_NPM_Dependencies-2ea44f)](package.json)
-[![48 Markdown Skills](https://img.shields.io/badge/Skills-48_Markdown_Skills-167d60)](skills/REGISTRY.md)
+[![50 Markdown Skills](https://img.shields.io/badge/Skills-50_Markdown_Skills-167d60)](skills/REGISTRY.md)
 [![MIT License](https://img.shields.io/badge/License-MIT-2ea44f)](LICENSE)
 
 ```bash
@@ -135,11 +135,11 @@ Every task classifies missing tools honestly (`A–E`) and automatically switche
 job-hunter-os/
 ├── AGENTS.md                 # Canonical rules, NL contract, Capability Matrix (A–E), 10 Guardrails
 ├── bin/cli.mjs               # Zero-dependency Node CLI (init, audit, route, verify, eval, doctor, sync-mcp...)
-├── skills/                   # 48 progressive-disclosure playbooks + REGISTRY.md + skills-manifest.json
-│   ├── 00–26*.md             # Core career, CV, ATS, LinkedIn, negotiation, contract, safety & eval skills
+├── skills/                   # 50 progressive-disclosure playbooks + REGISTRY.md + skills-manifest.json
+│   ├── 00–27*.md             # Core career, CV, ATS, LinkedIn, profile intelligence, negotiation, contract, safety & eval skills
 │   ├── platforms/            # LinkedIn, Wellfound, Indeed/Glassdoor, remote, MENA & B2B boards
 │   └── ats/                  # Greenhouse, Lever, Ashby, SmartRecruiters, BreezyHR, Workday, Taleo
-├── .agents/skills/           # 13 agentskills.io SKILL.md discovery wrappers
+├── .agents/skills/           # 14 agentskills.io SKILL.md discovery wrappers
 ├── .agent/workflows/         # IDE slash workflow entrypoints (/demo, /quick-tailor, /setup, /daily-run...)
 ├── commands/                 # Claude Code slash command wrappers
 ├── adapters/                 # 25+ AI IDE/CLI guides + 6 LLM family tuning guides
@@ -195,7 +195,7 @@ node ./bin/cli.mjs proof             # Regenerates logs/exports/proof-card.svg f
 | `verify <dir\|file> [--facts <json\|md>]` | Post-write deliverable verifier (placeholders, fake `.docx`, prose em-dashes, unverified facts) |
 | `init [--global] [--force] [--ide <name>]` | Scaffold workspace or `~/.job-hunter-os`, install IDE skills/rules & sync MCP configs |
 | `sync-mcp [--global]` | Safely merge Playwright (and optional Notion) into `.mcp.json`, Cursor, Claude, Codex `config.toml`, Gemini `settings.json`, Copilot & `.vscode/mcp.json` |
-| `doctor [--global] [--strict]` | Verify Node version, 5 gates, 48-skill manifest, `<60d` playbooks, links, PII hook & MCP files |
+| `doctor [--global] [--strict]` | Verify Node version, 5 gates, 50-skill manifest, `<60d` playbooks, links, PII hook & MCP files |
 | `eval [--baseline \| --file <json> \| --journeys]` | Run the 20 fixture assertions, external run grading, or 7 `node:test` integration suites |
 | `pre-submit [--draft <file> \| --text <str>]` | Enforce `<= 75`-word outreach limit and daily / Days 1–3 warm-up caps against `logs/` |
 | `proof` / `status` / `dashboard [--no-open]` | Generate proof card SVG/MD, inspect funnel & warm-up caps, or open local Kanban viewer |
@@ -205,8 +205,8 @@ node ./bin/cli.mjs proof             # Regenerates logs/exports/proof-card.svg f
 
 ## Documentation Index & Contributing
 
-- [**`AGENTS.md`**](AGENTS.md) & [**`skills/REGISTRY.md`**](skills/REGISTRY.md) — Canonical agent rules, NL Task Router (**48 skills**), and 10 guardrails
-- [**`docs/ARCHITECTURE.md`**](docs/ARCHITECTURE.md) & [**`docs/SKILL_CATALOG.md`**](docs/SKILL_CATALOG.md) — 6-phase pipeline and complete `48`-skill index (`30` core, `4` meta, `7` platform, `7` ATS)
+- [**`AGENTS.md`**](AGENTS.md) & [**`skills/REGISTRY.md`**](skills/REGISTRY.md) — Canonical agent rules, NL Task Router (**50 skills**), and 10 guardrails
+- [**`docs/ARCHITECTURE.md`**](docs/ARCHITECTURE.md) & [**`docs/SKILL_CATALOG.md`**](docs/SKILL_CATALOG.md) — 6-phase pipeline and complete `50`-skill index (`32` core, `4` meta, `7` platform, `7` ATS)
 - [**`docs/COMPATIBILITY.md`**](docs/COMPATIBILITY.md) & [**`docs/chat-commands.md`**](docs/chat-commands.md) — 25+ AI IDE setups, 6 LLM tuning guides, and command cheat sheet
 - [**`docs/execution-safety.md`**](docs/execution-safety.md), [**`SECURITY.md`**](SECURITY.md) & [**`CHANGELOG.md`**](CHANGELOG.md) — Safety boundaries, vulnerability disclosure, and release notes
 - [**`CONTRIBUTING.md`**](CONTRIBUTING.md) & [**`HIRED.md`**](HIRED.md) — Add ATS fixtures, regional board playbooks, IDE adapters, or share outcomes via [Share Outcome Issue](https://github.com/redasalem/job-hunter-os/issues/new?template=share-success.yml)
@@ -238,3 +238,4 @@ Shared, zero-dependency intelligence layer (`skills/profile-intelligence-engine.
 - **7-criteria audit & fact integrity:** Evaluates Relevance, Keyword coverage, Clarity, Impact, Consistency, Discoverability, and Quality against your local verified profile vault (`schemas/resume-data.schema.json`). Separates `verified_facts`, `user_confirmed_facts`, `inferred_info`, and `missing_info`—never promotes inferences or fabricates experience.
 - **Draft-first consolidated review:** Outputs a schema-validated `Profile Update Plan` (`add` and `replace` actions only; zero `remove`) and one field-level diff table. Unchanged fields are skipped automatically (`skipped_unchanged`).
 - **Platform adapters & honest limitations:** Supports declarative adapters for `linkedin`, `wellfound`, `ats`, `job_boards`, `portfolio`, and a conservative `generic` read/draft-only fallback for unknown sites. Live filling/saving requires explicit user `APPROVE`, an authorized browser session, and fresh post-save read-back verification (`verified`, `partially_applied`, `not_verified`, `blocked`, or `needs_review`).
+- **CLI & programmatic API:** Run `node ./bin/cli.mjs verify <plan.json> [--facts <facts>]` (or `verify <resume-data.json>`) for deterministic CLI plan and vault validation; `bin/profile-intelligence.mjs` also exports programmatic helpers (`getPlatformAdapter`, `validateProfileUpdatePlan`, `validateProfileVault`, `formatConsolidatedReview`, `summarizeVerificationOutcome`).

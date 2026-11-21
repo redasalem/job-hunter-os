@@ -8,7 +8,7 @@ import crypto from 'node:crypto';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { spawnSync, spawn } from 'node:child_process';
-import { validateProfileUpdatePlan } from './profile-intelligence.mjs';
+import { validateProfileUpdatePlan, validateProfileVault } from './profile-intelligence.mjs';
 
 const SOURCE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const HOME = os.homedir();
@@ -2322,7 +2322,14 @@ const ROUTE_RULES = [
   },
   {
     intent: 'profile-intelligence',
-    match: q => /(^|\s)\/profile-update\b/i.test(q) || (/\b(optimize|improve|update|sync|tailor|review|fill|audit)\b/i.test(q) && /\b(professional profile|career profile|job profile|job board profiles?|my profile|profile fields?|profiles? across|headline and about)\b/i.test(q) && !/\b(find .*jobs?|cv|resume)\b/i.test(q)),
+    match: q =>
+      /(^|\s)\/profile-update\b/i.test(q) ||
+      /(?:بروفايل|ملفي المهني|الملف المهني)/i.test(q) ||
+      (
+        /\b(optimize|improve|update|sync|tailor|review|fill|audit)\b/i.test(q) &&
+        /\b(professional profile|career profile|job profile|job board profiles?|linkedin profile|github profile|portfolio profile|my profile|profile fields?|profiles? across|headline and about)\b/i.test(q) &&
+        !/\bfind\b.*\bjobs?\b/i.test(q)
+      ),
     skills: ['profile-intelligence-engine', '01-resume-ingestion', '03-tailor-resume-and-verify', 'meta-self-verification'],
     workflow: '.agent/workflows/profile-update.md',
     readiness: 'task-specific (verified CV/profile facts + target role/goal; no /setup required)',
@@ -2527,6 +2534,10 @@ function verifyArtifactFile(filePath, factsConfig = null) {
     }
     if (isObj(parsed) && Object.prototype.hasOwnProperty.call(parsed, 'schema_version') && Object.prototype.hasOwnProperty.call(parsed, 'changes')) {
       const res = validateProfileUpdatePlan(parsed, { factsConfig });
+      return { name, errors: res.errors.map(err => `${name}: ${err}`), warnings: res.warnings };
+    }
+    if (isObj(parsed) && Object.prototype.hasOwnProperty.call(parsed, 'fact_provenance')) {
+      const res = validateProfileVault(parsed);
       return { name, errors: res.errors.map(err => `${name}: ${err}`), warnings: res.warnings };
     }
     return { name, errors, warnings };

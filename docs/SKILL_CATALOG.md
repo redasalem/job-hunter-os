@@ -1,10 +1,10 @@
-# Consolidated 48-Skill Catalog & URL Construction Guide
+# Consolidated 50-Skill Catalog & URL Construction Guide
 
-Every skill in `job-hunter-os` (`48` consolidated skills total: `30` core/career playbooks, `4` `meta-*` skills, `7` platform playbooks, and `7` ATS engines) follows the **`agentskills.io` / `SKILL.md` progressive disclosure standard** (`skills/REGISTRY.md` & `skills/skills-manifest.json`), loading only when its trigger matches the active phase of work.
+Every skill in `job-hunter-os` (`50` consolidated skills total: `32` core/career playbooks, `4` `meta-*` skills, `7` platform playbooks, and `7` ATS engines) follows the **`agentskills.io` / `SKILL.md` progressive disclosure standard** (`skills/REGISTRY.md` & `skills/skills-manifest.json`), loading only when its trigger matches the active phase of work.
 
 ---
 
-## 1. Core & Career-Ops Playbooks (30 Skills)
+## 1. Core & Career-Ops Playbooks (32 Skills)
 
 | # | Skill File | Responsibility |
 |---|---|---|
