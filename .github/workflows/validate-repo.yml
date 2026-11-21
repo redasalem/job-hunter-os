@@ -206,10 +206,12 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Check CLI syntax & run deterministic Skill Eval Harness + Journey Tests
+      - name: Check CLI syntax, npm package manifest & run deterministic Skill Eval Harness + Journey Tests
         run: |
           node --check bin/cli.mjs
           node --check bin/profile-intelligence.mjs
+          npm run pack:check
+          node ./bin/cli.mjs --version --json
           node ./bin/cli.mjs eval --baseline
           node ./bin/cli.mjs eval --file evals/results/live-agent-eval-run.json
           node ./bin/cli.mjs eval --journeys
@@ -278,6 +280,15 @@ jobs:
 
           HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" CODEX_HOME="$ISO_HOME/.codex" node "$REPO_DIR/bin/cli.mjs" init --global
           HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" CODEX_HOME="$ISO_HOME/.codex" node "$REPO_DIR/bin/cli.mjs" doctor --global
+          HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" CODEX_HOME="$ISO_HOME/.codex" node "$REPO_DIR/bin/cli.mjs" doctor --global --json >/dev/null
+          HOME="$ISO_HOME" USERPROFILE="$ISO_HOME" CODEX_HOME="$ISO_HOME/.codex" node "$REPO_DIR/bin/cli.mjs" status --global --json >/dev/null
+          if [ "${RUNNER_OS:-}" = "Windows" ]; then
+            pwsh -NoProfile -File "$REPO_DIR/scripts/install.ps1" -DryRun >/dev/null
+            pwsh -NoProfile -File "$REPO_DIR/scripts/install.ps1" -Uninstall >/dev/null
+          else
+            bash "$REPO_DIR/scripts/install.sh" --dry-run >/dev/null
+            bash "$REPO_DIR/scripts/install.sh" --uninstall >/dev/null
+          fi
 
           test -f "$ISO_HOME/.veycraft/AGENTS.md"
           test -f "$ISO_HOME/.agents/skills/daily-run/SKILL.md"

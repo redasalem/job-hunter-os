@@ -490,3 +490,57 @@ test('7. Multi-IDE Adapter Setup: OpenAI Codex CLI (TOML + AGENTS.md), Gemini CL
     fs.rmSync(tmp, { recursive: true, force: true });
   }
 });
+
+test('8. Developer Onboarding & Agent Discovery: clean uninitialized doctor --json, --version --json, status --json, safe no-arg help & VEYCRAFT_HOME', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'veycraft-onboarding-'));
+  try {
+    const emptyDir = path.join(tmp, 'empty-workspace');
+    const customHome = path.join(tmp, 'custom-veycraft-home');
+    const fakeHome = path.join(tmp, 'home');
+    fs.mkdirSync(emptyDir, { recursive: true });
+    fs.mkdirSync(fakeHome, { recursive: true });
+
+    const env = { ...process.env, HOME: fakeHome, USERPROFILE: fakeHome, VEYCRAFT_HOME: customHome, NO_COLOR: '1' };
+
+    // 1. Running CLI with no args prints help safely, exits 0, and creates zero files
+    const noArg = spawnSync(process.execPath, [CLI], { cwd: emptyDir, env, encoding: 'utf8' });
+    assert.equal(noArg.status, 0, noArg.stdout + noArg.stderr);
+    assert.match(noArg.stdout, /veycraft v/);
+    assert.equal(fs.readdirSync(emptyDir).length, 0);
+
+    // 2. --version --json returns structured metadata
+    const ver = spawnSync(process.execPath, [CLI, '--version', '--json'], { cwd: emptyDir, env, encoding: 'utf8' });
+    assert.equal(ver.status, 0, ver.stdout + ver.stderr);
+    const verJson = JSON.parse(ver.stdout);
+    assert.equal(verJson.name, 'veycraft');
+    assert.equal(verJson.zero_dependencies.runtime, 0);
+    assert.equal(verJson.zero_dependencies.dev, 0);
+
+    // 3. doctor --json in an uninitialized directory succeeds (exit 0), verifies bundled package provenance, and gives next_steps
+    const doc = spawnSync(process.execPath, [CLI, 'doctor', '--json'], { cwd: emptyDir, env, encoding: 'utf8' });
+    assert.equal(doc.status, 0, doc.stdout + doc.stderr);
+    const docJson = JSON.parse(doc.stdout);
+    assert.equal(docJson.product, 'veycraft');
+    assert.equal(docJson.initialized, false);
+    assert.equal(docJson.provenance_verified, true);
+    assert.equal(docJson.critical_failures, 0);
+    assert.equal(docJson.global_root, customHome);
+    assert.ok(docJson.skills_count >= 50);
+    assert.ok(Array.isArray(docJson.next_steps) && docJson.next_steps.length > 0);
+    assert.equal(fs.readdirSync(emptyDir).length, 0, 'doctor must never create files in an empty workspace');
+
+    // 4. init --global respects VEYCRAFT_HOME and status --global --json works cleanly
+    const initCustom = spawnSync(process.execPath, [CLI, 'init', '--global', '--ide', 'codex'], { cwd: emptyDir, env, encoding: 'utf8' });
+    assert.equal(initCustom.status, 0, initCustom.stdout + initCustom.stderr);
+    assert.ok(fs.existsSync(path.join(customHome, 'AGENTS.md')));
+    assert.ok(fs.existsSync(path.join(customHome, '.veycraft-install.json')));
+
+    const st = spawnSync(process.execPath, [CLI, 'status', '--global', '--json'], { cwd: emptyDir, env, encoding: 'utf8' });
+    assert.equal(st.status, 0, st.stdout + st.stderr);
+    const stJson = JSON.parse(st.stdout);
+    assert.equal(stJson.product, 'veycraft');
+    assert.equal(stJson.daily_cap.dry_run, true);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});

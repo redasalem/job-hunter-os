@@ -1,20 +1,65 @@
-﻿$ErrorActionPreference = "Stop"
+﻿param(
+  [switch]$DryRun,
+  [switch]$Uninstall,
+  [switch]$Help
+)
+
+$ErrorActionPreference = "Stop"
 
 $RepoUrl = "https://github.com/redasalem/veycraft.git"
+
+if ($Help) {
+  Write-Host @"
+Veycraft Installer (Windows PowerShell)
+Usage:
+  powershell -File scripts\install.ps1             Install or update Veycraft globally
+  powershell -File scripts\install.ps1 -DryRun     Preview target directories without making changes
+  powershell -File scripts\install.ps1 -Uninstall  Show safe uninstall steps (preserves context/ & logs/)
+"@
+  exit 0
+}
+
 $PrimaryHome = Join-Path $HOME ".veycraft"
 $LegacyHome = Join-Path $HOME ".job-hunter-os"
-if ((Test-Path $PrimaryHome) -or (-not (Test-Path $LegacyHome))) {
+if ($env:VEYCRAFT_HOME) {
+  $HomeDir = $env:VEYCRAFT_HOME
+} elseif ((Test-Path $PrimaryHome) -or (-not (Test-Path $LegacyHome))) {
   $HomeDir = $PrimaryHome
 } else {
   $HomeDir = $LegacyHome
   Write-Host "[veycraft] Detected existing legacy checkout at $HomeDir; preserving it in place."
 }
 
+if ($Uninstall) {
+  Write-Host "[veycraft] Safe Uninstall Guide (no personal data deleted):"
+  Write-Host "  1. If installed globally via npm: npm uninstall -g veycraft"
+  Write-Host "  2. Your private career data in $HomeDir (context/, logs/, browser-profile/) is preserved."
+  Write-Host "  3. To remove Veycraft files completely later (optional): Remove-Item -Recurse -Force `"$HomeDir`""
+  exit 0
+}
+
+if ($DryRun) {
+  Write-Host "[veycraft] DRY RUN — no files will be created or modified."
+  Write-Host "  Repository:  $RepoUrl"
+  Write-Host "  Target Home: $HomeDir"
+  Write-Host "  Actions:     clone/pull repo -> verify Node >= 18 -> run 'node $HomeDir\bin\cli.mjs init --global'"
+  Write-Host "  Preserved:   $HomeDir\context\, $HomeDir\logs\, $HomeDir\browser-profile\, existing custom IDE rules"
+  exit 0
+}
+
 Write-Host "[veycraft] Installing to $HomeDir..."
 
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-  Write-Error "git is required."
+  Write-Error "[veycraft] git is required. Install Git for Windows from https://git-scm.com/ and re-run."
   exit 1
+}
+
+if (Get-Command node -ErrorAction SilentlyContinue) {
+  $nodeMajor = [int](node -p "Number(process.versions.node.split('.')[0])")
+  if ($nodeMajor -lt 18) {
+    Write-Error "[veycraft] Node.js >= 18 is required (found $(node -v)). Upgrade from https://nodejs.org/."
+    exit 1
+  }
 }
 
 if (Test-Path (Join-Path $HomeDir ".git")) {
